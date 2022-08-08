@@ -22,6 +22,7 @@ class MainActivity : AppCompatActivity() {
         bottom_nav.setOnNavigationItemSelectedListener(BottomNavItemSelectedListener)
         friendFragment = FriendFragment.newInstance()
         supportFragmentManager.beginTransaction().replace(R.id.fragment_frame, friendFragment).commit()
+
     }
 
     private val BottomNavItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener{
