@@ -1,15 +1,18 @@
 package com.kbds.nativedev.kbchat
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseAuth
 import com.kbds.nativedev.kbchat.fragment.ChatFragment
 import com.kbds.nativedev.kbchat.fragment.FriendFragment
 import com.kbds.nativedev.kbchat.fragment.SettingFragment
 import com.kbds.nativedev.kbchat.fragment.SettingNaviFragment
 import kotlinx.android.synthetic.main.activity_main.*
-import android.content.Intent
+import kotlinx.android.synthetic.main.fragment_setting_navi.*
 
 private lateinit var friendFragment: FriendFragment
 private lateinit var chatFragmet: ChatFragment
@@ -60,6 +63,27 @@ class MainActivity : AppCompatActivity() {
                 settingNaviFragment = SettingNaviFragment.newInstance(callback)
 
                 supportFragmentManager.beginTransaction().replace(R.id.fragment_frame, settingNaviFragment).commit()
+
+
+                // 주석 처리 합니다
+//                val intentMain = Intent(this, SettingNaviActivity::class.java)
+//                startActivity(intentMain)
+/*
+                settingNaviFragment.btn_logout.setOnClickListener {
+                    val intentMain = Intent(this, SettingNaviActivity::class.java)
+                    startActivity(intentMain)
+                }*/
+/*
+                settingNaviFragment.btn_modify.setOnClickListener {
+                    //this.OnChangeSettingFragment
+                    //SettingNaviFragment.onChangeSettingFrag?.onModifyUser()
+                    //MainActivity.OnChangeSettingFragment.onModifyUser()
+                    //OnChangeSettingFragment.onModifyUser
+                    //MainActivity.OnChangeSettingFragment?.
+
+                }
+*/
+
             }
         }
         true
@@ -69,4 +93,6 @@ class MainActivity : AppCompatActivity() {
         fun onModifyUser()
         fun onLogOut()
     }
+
+
 }

@@ -1,22 +1,18 @@
 package com.kbds.nativedev.kbchat.fragment
 
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import androidx.fragment.app.Fragment
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
 import com.kbds.nativedev.kbchat.MainActivity.OnChangeSettingFragment
 import com.kbds.nativedev.kbchat.R
-import com.kbds.nativedev.kbchat.MainActivity
+import com.google.firebase.auth.FirebaseAuth
 
 private lateinit var auth: FirebaseAuth
 
-class SettingNaviFragment : Fragment() {
-
+class SettingNaviFragment3 : Fragment() {
     companion object {
         fun newInstance(onChangeSettingFrag: OnChangeSettingFragment): SettingNaviFragment {
             this.onChangeSettingFrag = onChangeSettingFrag
@@ -27,6 +23,10 @@ class SettingNaviFragment : Fragment() {
         const val TAG: String = "SettingFragment2"
     }
 
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//    }
+
     override fun onCreateView(
         inflater: LayoutInflater,    // inflater : XML을 화면에 사용할 준비(XML -> VIEW)
         container: ViewGroup?,       // container : Fragment에서 사용될 XML의 부모뷰
@@ -36,34 +36,32 @@ class SettingNaviFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_setting_navi, container, false)
 
         val btnModify = view.findViewById<Button>(R.id.btn_modify)
-        val btnLogout = view.findViewById<Button>(R.id.btn_logout)
+        //val btnLogout = view.findViewById<Button>(R.id.btn_logout)
 
 
         btnModify!!.setOnClickListener{
             onChangeSettingFrag?.onModifyUser()
         }
 
-        auth = Firebase.auth
-
+        //auth = Firebase.auth
+/*
         btnLogout!!.setOnClickListener{
-            //Toast.makeText(requireContext(), "로그아웃 성공!", Toast.LENGTH_SHORT).show();
+            FirebaseAuth.getInstance().signOut()
+            //FirebaseAuth.getInstance().signOut()
+            //auth.signOut()
+            //Firebase.auth.signOut()
+            //private lateinit var googleSignInClient : googleSignInClient
+            //googleSignInClient.signOut().addOnCompleteListener(this) {
+            //}
 
-            auth?.signOut()
-            onChangeSettingFrag?.onLogOut()
-            /*
-            val builder = AlertDialog.Builder(this)
-
-            builder.setTitle("로그아웃").setMessage("로그아웃 하시겠습니까?")
-                .setPositiveButton("로그아웃", DialogInterface.OnClickListener { dialog, whichButton ->
-                    onChangeSettingFrag?.onLogOut()
-                })
-                .setNegativeButton("취소",
-                    DialogInterface.OnClickListener { dialog, whichButton -> })
-           builder.show()
-           */
-
+            Toast.makeText(requireContext(), "로그아웃 성공!!", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "로그아웃 성공!!", Toast.LENGTH_SHORT).show();
+            //val intentMain = Intent(this, LoginActivity::class.java)
+            //startActivity(intentMain)
         }
+*/
         return view
     }
+
 
 }

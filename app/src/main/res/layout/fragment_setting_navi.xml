@@ -10,12 +10,14 @@
         android:id="@+id/btn_modify"
         android:text="회원정보 변경"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        tools:layout="@layout/fragment_setting_navi"/>
 
     <Button
         android:id="@+id/btn_logout"
         android:text="로그아웃"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        tools:layout="@layout/fragment_setting_navi"/>
 
 </LinearLayout>
