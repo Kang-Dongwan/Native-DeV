@@ -1,17 +1,16 @@
 package com.kbds.nativedev.kbchat.fragment
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import com.kbds.nativedev.kbchat.MainActivity.OnChangeSettingFragment
-import com.kbds.nativedev.kbchat.R
+import androidx.fragment.app.Fragment
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
-import android.widget.Toast
+import com.kbds.nativedev.kbchat.MainActivity.OnChangeSettingFragment
+import com.kbds.nativedev.kbchat.R
 
 private lateinit var auth: FirebaseAuth
 
@@ -45,12 +44,25 @@ class SettingNaviFragment : Fragment() {
             onChangeSettingFrag?.onModifyUser()
         }
 
-        //auth = Firebase.auth
+        auth = Firebase.auth
 
         btnLogout!!.setOnClickListener{
-            Toast.makeText(requireContext(), "로그아웃 성공!", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(requireContext(), "로그아웃 성공!", Toast.LENGTH_SHORT).show();
 
-            //auth?.signOut()
+            auth?.signOut()
+            onChangeSettingFrag?.onLogOut()
+            /*
+            val builder = AlertDialog.Builder(this)
+
+            builder.setTitle("로그아웃").setMessage("로그아웃 하시겠습니까?")
+                .setPositiveButton("로그아웃", DialogInterface.OnClickListener { dialog, whichButton ->
+                    onChangeSettingFrag?.onLogOut()
+                })
+                .setNegativeButton("취소",
+                    DialogInterface.OnClickListener { dialog, whichButton -> })
+           builder.show()
+           */
+
         }
         return view
     }

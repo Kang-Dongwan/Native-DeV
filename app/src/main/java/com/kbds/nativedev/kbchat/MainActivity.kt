@@ -9,11 +9,13 @@ import com.kbds.nativedev.kbchat.fragment.FriendFragment
 import com.kbds.nativedev.kbchat.fragment.SettingFragment
 import com.kbds.nativedev.kbchat.fragment.SettingNaviFragment
 import kotlinx.android.synthetic.main.activity_main.*
+import android.content.Intent
 
 private lateinit var friendFragment: FriendFragment
 private lateinit var chatFragmet: ChatFragment
 private lateinit var settingFragmet: SettingFragment
 private lateinit var settingNaviFragment: SettingNaviFragment
+private lateinit var nextIntent: Intent
 
 @Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
@@ -24,6 +26,7 @@ class MainActivity : AppCompatActivity() {
         bottom_nav.setOnNavigationItemSelectedListener(BottomNavItemSelectedListener)
         friendFragment = FriendFragment.newInstance()
         supportFragmentManager.beginTransaction().replace(R.id.fragment_frame, friendFragment).commit()
+        nextIntent = Intent(this, LoginActivity::class.java)
     }
 
     private lateinit var callback: OnChangeSettingFragment
@@ -48,6 +51,10 @@ class MainActivity : AppCompatActivity() {
                     override fun onModifyUser() {
                         supportFragmentManager.beginTransaction().replace(R.id.fragment_frame, settingFragmet).commit()
                     }
+                    override fun onLogOut() {
+                        //val nextIntent = Intent(this, LoginActivity::class.java)
+                        startActivity(nextIntent)
+                    }
                 }
                 settingFragmet = SettingFragment.newInstance()
                 settingNaviFragment = SettingNaviFragment.newInstance(callback)
@@ -60,5 +67,6 @@ class MainActivity : AppCompatActivity() {
 
     interface OnChangeSettingFragment {
         fun onModifyUser()
+        fun onLogOut()
     }
 }
