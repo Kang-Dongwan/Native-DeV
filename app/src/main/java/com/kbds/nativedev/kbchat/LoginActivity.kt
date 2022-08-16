@@ -35,7 +35,8 @@ class LoginActivity: AppCompatActivity() {
         }
 
         signUp_btn.setOnClickListener {
-            Toast.makeText(this, "회원가입", Toast.LENGTH_SHORT).show()
+            val intentMain = Intent(this, RegisterActivity::class.java)
+            startActivity(intentMain)
         }
     }
 
