@@ -22,6 +22,9 @@ import com.google.firebase.ktx.Firebase
 import com.kbds.nativedev.kbchat.databinding.FragmentFirstBinding
 import com.kbds.nativedev.kbchat.fragment.FriendFragment
 import kotlinx.android.synthetic.main.fragment_first.*
+
+private lateinit var auth: FirebaseAuth
+
 class TestData(
     private var data1: String? = null,
     private var data2: String? = null,
