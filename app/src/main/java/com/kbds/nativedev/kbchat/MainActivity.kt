@@ -7,6 +7,7 @@ import android.util.Log
 import android.widget.Toast
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.kbds.nativedev.kbchat.databinding.ActivityMainBinding
 import com.kbds.nativedev.kbchat.fragment.ChatFragment
 import com.kbds.nativedev.kbchat.fragment.FriendFragment
 import com.kbds.nativedev.kbchat.fragment.SettingFragment
@@ -22,12 +23,14 @@ private lateinit var nextIntent: Intent
 
 @Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        bottom_nav.setOnNavigationItemSelectedListener(BottomNavItemSelectedListener)
+        bottom_nav.setOnNavigationItemSelectedListener(bottomNavItemSelectedListener)
         friendFragment = FriendFragment.newInstance()
         supportFragmentManager.beginTransaction().replace(R.id.fragment_frame, friendFragment).commit()
         nextIntent = Intent(this, LoginActivity::class.java)
@@ -35,7 +38,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var callback: OnChangeSettingFragment
 
-    private val BottomNavItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener{
+    private val bottomNavItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener{
         Log.d("itemId", "${it.itemId}")
         Log.d("menu_friend", "${R.id.menu_friend}")
         Log.d("menu_chat", "${R.id.menu_chat}")

@@ -100,17 +100,22 @@ class FriendFragment : Fragment() {
         };
 
         if (user != null) {
-            database.child("friend").child(user.uid).get().addOnSuccessListener { it ->
+            database.child("friend").child(user.uid).get().addOnSuccessListener {
+                if (it.value == null) {
+                    // 친구없을때??
+                    Toast.makeText(context, "친구없을때???",Toast.LENGTH_SHORT).show()
+                    return@addOnSuccessListener
+                }
                 data = it.value as MutableMap<String, String>
                 for (key in data.keys) {
                     database.child("friend").child(user.uid).child(key).get().addOnSuccessListener { it1 ->
                         data1 = it1.value as MutableMap<String, String>
-                        Log.d("test", "phw dataList.size0 = "+data1.toString())
+                        Log.d("test", "phw dataList.size0 = $data1")
                         var myMutableList1 : ArrayList<TestData> = arrayListOf(TestData(data1.get("name"),data1.get("comment"),"test"))
                         dataList.addAll(myMutableList1);
                         list = dataList;
                         Log.d("test", "phw dataList.size1 = "+data.keys)
-                        myMutableList.add(TestData(data.get("name"),data.get("comment"),"test"))
+                        myMutableList.add(TestData(data.get("name"), data["comment"],"test"))
                         /*data?.let {
                             for (i in data) {
                                 Toast.makeText(
@@ -142,7 +147,7 @@ class FriendFragment : Fragment() {
         }*/
 
         addFriendBtn.setOnClickListener {
-            val intent = Intent(getActivity(), AddFriendsActivity::class.java)
+            val intent = Intent(activity, AddFriendsActivity::class.java)
             startActivity(intent)
 
         }
