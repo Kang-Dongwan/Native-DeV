@@ -22,6 +22,7 @@ import com.kbds.nativedev.kbchat.R
 import com.kbds.nativedev.kbchat.adapters.ListAdapter
 import kotlinx.android.synthetic.main.fragment_friend.*
 import com.google.firebase.database.DataSnapshot //toy
+import com.kbds.nativedev.kbchat.ProfileDetailActivity
 import kotlinx.android.synthetic.main.item_data_list.*
 
 class TestData(
@@ -188,6 +189,17 @@ class FriendFragment : Fragment() {
                                     LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
                                 // RecyclerView.adapter에 지정
                                 listView.adapter = listAdapter
+
+                                listAdapter.setOnItemClickListener(object : ListAdapter.OnItemClickListener{
+                                    override fun onItemClick(v: View, data: TestData, pos : Int) {
+                                        Intent(getActivity(), ProfileDetailActivity::class.java).apply {
+                                            putExtra("data", data.getData1())
+                                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                        }.run { startActivity(this) }
+
+                                    }
+
+                                })
                             }
                     }
                 }
@@ -212,6 +224,7 @@ class FriendFragment : Fragment() {
         }
 
     }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
     }

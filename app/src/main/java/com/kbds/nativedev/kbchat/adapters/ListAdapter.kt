@@ -32,7 +32,13 @@ class ListAdapter (private var list: MutableList<TestData>): RecyclerView.Adapte
             //Glide.with(holder.itemView.context).load(friend[position].profileImageUrl)
             //    .apply(RequestOptions().circleCrop())
             //    .into(holder.imageView)
-
+            val pos = adapterPosition
+            if(pos!= RecyclerView.NO_POSITION)
+            {
+                itemView.setOnClickListener {
+                    listener?.onItemClick(itemView,data,pos)
+                }
+            }
         }
     }
 
@@ -49,6 +55,14 @@ class ListAdapter (private var list: MutableList<TestData>): RecyclerView.Adapte
     // ViewHolder의 bind 메소드를 호출한다.
     override fun onBindViewHolder(holder: ListAdapter.ListItemViewHolder, position: Int) {
         holder.bind(list[position], position)
+    }
+
+    interface OnItemClickListener{
+        fun onItemClick(v:View, data: TestData, pos : Int)
+    }
+    private var listener : OnItemClickListener? = null
+    fun setOnItemClickListener(listener : OnItemClickListener) {
+        this.listener = listener
     }
 
 }

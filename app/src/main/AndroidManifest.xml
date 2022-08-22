@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.KBChat">
         <activity
+            android:name=".ProfileDetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".AddFriendsActivity"
             android:exported="false"
             android:label="@string/title_activity_add_friends"
