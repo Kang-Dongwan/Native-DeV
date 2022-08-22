@@ -3,6 +3,7 @@ package com.kbds.nativedev.kbchat.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.kbds.nativedev.kbchat.R
@@ -17,12 +18,21 @@ class ListAdapter (private var list: MutableList<TestData>): RecyclerView.Adapte
         var data1Text: TextView = itemView!!.findViewById(R.id.data1Text)
         var data2Text: TextView = itemView!!.findViewById(R.id.data2Text)
         var data3Text: TextView = itemView!!.findViewById(R.id.data3Text)
+        //var data4Text: TextView = itemView!!.findViewById(R.id.data4Text)//toy
+        var imageVie: ImageView = itemView!!.findViewById(R.id.home_item_iv)//toy
+
 
         // onBindViewHolder의 역할을 대신한다.
         fun bind(data: TestData, position: Int) {
             data1Text.text = data.getData1()
             data2Text.text = data.getData2()
             data3Text.text = data.getData3()
+            //data4Text.text = data.getData4()//toy
+
+            //Glide.with(holder.itemView.context).load(friend[position].profileImageUrl)
+            //    .apply(RequestOptions().circleCrop())
+            //    .into(holder.imageView)
+
         }
     }
 
