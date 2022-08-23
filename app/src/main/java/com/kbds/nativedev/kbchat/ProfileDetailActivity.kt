@@ -16,5 +16,6 @@ class ProfileDetailActivity : AppCompatActivity() {
         textView1.text = "ProfileImageUrl: $profileImageUrl"
         textView2.text = "Name: $name"
         textView3.text = "Comment: $comment"
+
     }
 }

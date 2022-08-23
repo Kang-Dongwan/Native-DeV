@@ -58,7 +58,7 @@ data class UserModel(
     var name: String? = null,
     var comment: String? = null
 )
-class FirstFragment : Fragment(), View.OnClickListener {
+class FirstFragment : Fragment(), MainActivity.onBackPressedListener, View.OnClickListener {
 
     private var _binding: FragmentFirstBinding? = null
     val database = Firebase.database
@@ -129,13 +129,13 @@ class FirstFragment : Fragment(), View.OnClickListener {
                                     Toast.makeText(getActivity(), "Success add User", Toast.LENGTH_LONG).show()
                                     return
                                 }
-                                Toast.makeText(getActivity(), "Not Found User", Toast.LENGTH_LONG).show()
 
                                 //val map = snapshot.getValue(Map::class.java) as Map<String, String>
                                 //val comment = map.get("comment").toString()
                                 //val name = map.get("name").toString()
                         Log.d("FirstFragment", "ValueEventListener : " + snapshot.value + " a = " + name + "a.value = "+ comment.value)
                     }
+                    Toast.makeText(getActivity(), "Not Found User", Toast.LENGTH_LONG).show()
                 }
 
                 override fun onCancelled(databaseError: DatabaseError) {}
@@ -230,13 +230,13 @@ class FirstFragment : Fragment(), View.OnClickListener {
                                         Toast.makeText(getActivity(), "Success Delte User", Toast.LENGTH_LONG).show()
                                         return
                                     }
-                                    Toast.makeText(getActivity(), "Not Found User", Toast.LENGTH_LONG).show()
 
                                     //val map = snapshot.getValue(Map::class.java) as Map<String, String>
                                     //val comment = map.get("comment").toString()
                                     //val name = map.get("name").toString()
                                     Log.d("FirstFragment", "ValueEventListener : " + snapshot.value + " a = " + name + "a.value = "+ comment)
                                 }
+                                Toast.makeText(getActivity(), "Not Found User", Toast.LENGTH_LONG).show()
                             }
 
                             override fun onCancelled(databaseError: DatabaseError) {}
@@ -275,7 +275,7 @@ class FirstFragment : Fragment(), View.OnClickListener {
         super.onDestroyView()
         _binding = null
     }
-
+    
     override fun onClick(v: View?) {
         val user = auth.currentUser
         Log.d("test", "phw333")
@@ -324,6 +324,14 @@ class FirstFragment : Fragment(), View.OnClickListener {
             }
         }
     }
+    //--2022.08.23 뒤로가기
+    override fun onBackPressed(){
+
+        if(this is FirstFragment){
+            activity?.finish()
+        }
+    }
+    //--2022.08.23 end
 }
 
 

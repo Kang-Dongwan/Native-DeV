@@ -15,7 +15,16 @@ private lateinit var settingFragmet: SettingFragment
 
 @Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
+    //--2022.08.23 뒤로가기
+    interface onBackPressedListener{
+        fun onBackPressed()
+    }
 
+    //--2022.08.23 뒤로가기
+    override fun onBackPressed() {
+        super.onBackPressed()
+        Log.d("MainActivity Back test","commit")
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
