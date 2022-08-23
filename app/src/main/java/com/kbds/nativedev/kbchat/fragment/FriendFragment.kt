@@ -12,7 +12,8 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.auth.ktx.auth
+import com.google.android.gms.tasks.Task
+//import com.google.firebase.ktx.auth
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -22,7 +23,9 @@ import com.kbds.nativedev.kbchat.R
 import com.kbds.nativedev.kbchat.adapters.ListAdapter
 import kotlinx.android.synthetic.main.fragment_friend.*
 import com.google.firebase.database.DataSnapshot //toy
-import com.kbds.nativedev.kbchat.ProfileDetailActivity
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestore
+import com.kbds.nativedev.kbchat.auth
 import kotlinx.android.synthetic.main.item_data_list.*
 
 class TestData(
@@ -64,6 +67,9 @@ class FriendFragment : Fragment() {
     private lateinit var data1: MutableMap<String, String>
     val database1 = Firebase.database
     val myRef = database1.getReference("friend")
+    val userRef = database1.getReference("user")
+    var db = FirebaseFirestore.getInstance()
+
 
 
     var dataList: ArrayList<TestData> = arrayListOf(
@@ -101,9 +107,9 @@ class FriendFragment : Fragment() {
         //var list: ArrayList<TestData> = requireActivity().intent!!.extras!!.get("dataList") as ArrayList<TestData>
         // Fragment에서 전달받은 list를 넘기면서 ListAdapter 생성
         database = FirebaseDatabase.getInstance().reference
-        val user = Firebase.auth.currentUser
+        val user = auth.currentUser
         val myMutableList = mutableListOf(TestData("test1","test2","test3", "test4"))//toy
-        val myUid = Firebase.auth.currentUser?.uid.toString()
+        val myUid = auth.currentUser?.uid.toString()
         Log.d("test", "LSM myUid = " + myUid)
 
         if (user != null) {
@@ -111,6 +117,8 @@ class FriendFragment : Fragment() {
         };
 
         if (user != null) {
+            var imageUrl = ""
+
             //------------------------------------------
             // Friend 조회
             //------------------------------------------
@@ -125,97 +133,80 @@ class FriendFragment : Fragment() {
                                 Log.d("test", "phw dataList.size0 = " + data1.toString()) //uid=-NA-NA5aReWLpsU7sRhL, -NA-N0AH1g8x6AY_7O3L
                                 Log.d("test", "LSM dataList.uid = " + data1.get("uid"))
                                 Log.d("test", "LSM FRIEND.name = " + data1.get("name"))
-                                var myMutableList1: ArrayList<TestData> = arrayListOf(
-                                    TestData(
-                                        data1.get("name"),
-                                        data1.get("comment"),
-                                        "test",
-                                        "url test" //toy
-                                    )
+                                var friendUid = it1.key
+                                var imageHash = HashMap<String, Any>()
+                                var friendName = data1.get("name")
+                                var friendComment = data1.get("comment")
+
+                                Log.d(
+                                    "test", "LSM USER.friendUid.toString() = " + friendUid.toString()
                                 )
-                                var username = data1.get("name")
+                                val addValueEventListener =
+                                    FirebaseDatabase.getInstance().reference.child("user")
+                                        .addValueEventListener(object :
+                                            ValueEventListener {
+                                            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                                for (snapshot in dataSnapshot.children) {
+                                                    var uid = snapshot.key
+                                                    var name = snapshot.child("name")
+                                                    var comment = snapshot.child("comment")
+                                                    var freindUid02 = snapshot.child("uid")
+                                                    var profileImageUrl = ""
+                                                    if(snapshot.child("profileImageUrl").getValue() == null){
+                                                        profileImageUrl = ""
+                                                    } else {
+                                                        profileImageUrl = snapshot.child("profileImageUrl").getValue().toString()
+                                                    }
+                                                    Log.d("test", "LSM USER.name = " + name)   //db
+                                                    Log.d("test", "LSM USER.friendUid = " + friendUid)
+                                                    Log.d("test", "LSM USER.uid = " + uid)
+                                                    Log.d("test", "LSM USER.profileImageUrl = " + profileImageUrl)
 
-                                //------------------------------------------
-                                // user 조회
-                                //------------------------------------------
-                                FirebaseDatabase.getInstance().reference.child("user").addValueEventListener(object :
-                                    ValueEventListener {
-                                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                                        for (snapshot in dataSnapshot.children) {
-                                            var friendUid = snapshot.key
-                                            var name = snapshot.child("name")
-                                            var comment = snapshot.child("comment")
-                                            var freindUid02 = snapshot.child("uid")
-                                            var profileImageUrl = snapshot.child("profileImageUrl")
+                                                    if (uid.toString().equals(friendUid.toString()) == true) {
+                                                        Log.d("test","LSM USER.name==FRIEND.name " + name.getValue().toString())
+                                                        imageHash.put(name.getValue().toString(),profileImageUrl)
+                                                        //imageUrl = profileImageUrl.toString()
+                                                        Log.d("test", "imageHash.profileImageUrl = " + profileImageUrl)
+                                                        var myMutableList1: ArrayList<TestData> = arrayListOf(
+                                                            TestData(
+                                                                friendName.toString(),
+                                                                friendComment.toString(),
+                                                                friendUid.toString(),
+                                                                profileImageUrl
+                                                            )
+                                                        )
 
-                                            Log.d("test", "LSM USER.name = " + name)   //db
-                                            Log.d("test", "LSM USER.freindUid02 = " + freindUid02) //input
-                                            Log.d("test", "LSM USER.profileImageUrl = " + profileImageUrl)
+                                                        Log.d("test", "imageHash.get = " + imageHash.get(data1.get("name").toString()))
+                                                        dataList.addAll(myMutableList1);
+                                                        list = dataList;
+                                                        Log.d("test", "phw dataList.size1 = " + data.keys)
+                                                        Log.d("test", "phw dataList.size2 = " + dataList.size)
+                                                        listAdapter = ListAdapter(list)
+                                                        listView.layoutManager =
+                                                            LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
+                                                        // RecyclerView.adapter에 지정
+                                                        listView.adapter = listAdapter
+                                                    }
 
-                                            if(name.value?.equals(username) == true) {
-                                                Log.d("test", "LSM USER.name==FRIEND.name " + name)
+                                                }
                                             }
 
-                                        }
-                                    }
-                                    override fun onCancelled(databaseError: DatabaseError) {}
-                                })
+                                            override fun onCancelled(databaseError: DatabaseError) {}
+                                        })
 
 
-
-                                dataList.addAll(myMutableList1);
-                                list = dataList;
-                                Log.d("test", "phw dataList.size1 = " + data.keys)
-
-                                myMutableList.add(
-                                    TestData(
-                                        data.get("name"),
-                                        data.get("comment"),
-                                        "test"
-                                    )
-                                )
-                                /*data?.let {
-                            for (i in data) {
-                                Toast.makeText(
-                                    context, "i.key = " + i,
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                        }*/
-                                Log.d("test", "phw dataList.size2 = " + dataList.size)
-                                //var list = myMutableList
-                                listAdapter = ListAdapter(list)
-                                listView.layoutManager =
-                                    LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
-                                // RecyclerView.adapter에 지정
-                                listView.adapter = listAdapter
-
-                                listAdapter.setOnItemClickListener(object : ListAdapter.OnItemClickListener{
-                                    override fun onItemClick(v: View, data: TestData, pos : Int) {
-                                        Intent(getActivity(), ProfileDetailActivity::class.java).apply {
-                                            putExtra("data", data.getData1())
-                                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                        }.run { startActivity(this) }
-
-                                    }
-
-                                })
                             }
                     }
                 }
-                //var myMutableList1 : ArrayList<TestData> = arrayListOf(TestData(data.get("name"),data.get("comment"),"test"))
-                //dataList.set(0,TestData(data.get("name"),data.get("comment"),"test"));
-                //dataList.addAll(myMutableList1);
-
             }
 
         }
         /*Toast.makeText(
-            context, "dataStr = " + data,
-            Toast.LENGTH_SHORT
-        ).show()
-    }.addOnFailureListener{
-    }*/
+                context, "dataStr = " + data,
+                Toast.LENGTH_SHORT
+            ).show()
+        }.addOnFailureListener{
+        }*/
 
         addFriendBtn.setOnClickListener {
             val intent = Intent(getActivity(), AddFriendsActivity::class.java)
@@ -224,7 +215,6 @@ class FriendFragment : Fragment() {
         }
 
     }
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
     }

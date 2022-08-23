@@ -1,11 +1,16 @@
 package com.kbds.nativedev.kbchat.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.kbds.nativedev.kbchat.R
 import com.kbds.nativedev.kbchat.fragment.TestData
 
@@ -18,9 +23,8 @@ class ListAdapter (private var list: MutableList<TestData>): RecyclerView.Adapte
         var data1Text: TextView = itemView!!.findViewById(R.id.data1Text)
         var data2Text: TextView = itemView!!.findViewById(R.id.data2Text)
         var data3Text: TextView = itemView!!.findViewById(R.id.data3Text)
-        //var data4Text: TextView = itemView!!.findViewById(R.id.data4Text)//toy
-        var imageVie: ImageView = itemView!!.findViewById(R.id.home_item_iv)//toy
-
+        var data4Text: TextView = itemView!!.findViewById(R.id.data4Text)//toy
+        var imageView: ImageView = itemView!!.findViewById(R.id.home_item_iv)//toy
 
         // onBindViewHolder의 역할을 대신한다.
         fun bind(data: TestData, position: Int) {
@@ -28,17 +32,14 @@ class ListAdapter (private var list: MutableList<TestData>): RecyclerView.Adapte
             data2Text.text = data.getData2()
             data3Text.text = data.getData3()
             //data4Text.text = data.getData4()//toy
+            Log.d("test", "LSM USER.name==FRIEND.name01 :" + data1Text.text)
+            Log.d("test", "LSM USER.name==FRIEND.imageUrl :" + data.getData4())
 
-            //Glide.with(holder.itemView.context).load(friend[position].profileImageUrl)
-            //    .apply(RequestOptions().circleCrop())
-            //    .into(holder.imageView)
-            val pos = adapterPosition
-            if(pos!= RecyclerView.NO_POSITION)
-            {
-                itemView.setOnClickListener {
-                    listener?.onItemClick(itemView,data,pos)
-                }
-            }
+            Glide.with(this.imageView).load(data.getData4())
+                .error(R.drawable.user) // 이미지로드 실패시 로컬 user.png
+                .circleCrop()
+                .into(imageView)
+
         }
     }
 
@@ -64,5 +65,4 @@ class ListAdapter (private var list: MutableList<TestData>): RecyclerView.Adapte
     fun setOnItemClickListener(listener : OnItemClickListener) {
         this.listener = listener
     }
-
 }

@@ -2,11 +2,11 @@
 buildscript {
     repositories {
         google()  // Google's Maven repository
-
+        mavenCentral()
     }
-    dependencies {
-        classpath 'com.google.gms:google-services:4.3.10'
 
+    dependencies {
+    classpath 'com.google.gms:google-services:4.3.13'
     }
 }
 
@@ -19,3 +19,4 @@ plugins {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
