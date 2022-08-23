@@ -17,15 +17,13 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.kbds.nativedev.kbchat.AddFriendsActivity
-import com.kbds.nativedev.kbchat.MainActivity
-import com.kbds.nativedev.kbchat.R
 import com.kbds.nativedev.kbchat.adapters.ListAdapter
 import kotlinx.android.synthetic.main.fragment_friend.*
 import com.google.firebase.database.DataSnapshot //toy
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
-import com.kbds.nativedev.kbchat.auth
+import com.kbds.nativedev.kbchat.*
+import com.kbds.nativedev.kbchat.R
 import kotlinx.android.synthetic.main.item_data_list.*
 
 class TestData(
@@ -52,7 +50,7 @@ class TestData(
     fun setData3(type: String) {
         this.data3 = data3
     }
-    fun getData4(): String? { //toy
+    fun getData4(): String? { //toybind(item:
         return data4
     }
     fun setData4(type: String) { //toy
@@ -186,6 +184,26 @@ class FriendFragment : Fragment() {
                                                             LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
                                                         // RecyclerView.adapter에 지정
                                                         listView.adapter = listAdapter
+
+                                                        listAdapter.setOnItemClickListener(object : ListAdapter.OnItemClickListener{
+                                                            override fun onItemClick(v: View, data: TestData, pos : Int) {
+                                                                /*Intent(getActivity(), ProfileDetailActivity::class.java).apply {
+                                                                    putExtra("name", data.getData1())
+                                                                    putExtra("profileImg", data.getData2())
+                                                                    putExtra("comment", data.getData3())
+                                                                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                                                }.run { startActivity(this) }*/
+                                                                val intent = Intent(getActivity(), ProfileDetailActivity::class.java)
+                                                                intent.putExtra("name", data.getData1())
+                                                                intent.putExtra("comment", data.getData2())
+                                                                intent.putExtra("profileImageUrl", data.getData3())
+                                                                /*intent.putExtra("name", "testName")
+                                                                intent.putExtra("comment", "testComment")
+                                                                intent.putExtra("profileImageUrl", "testProfileImage")*/
+                                                                startActivity(intent)
+                                                            }
+
+                                                        })
                                                     }
 
                                                 }

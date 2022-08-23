@@ -40,6 +40,13 @@ class ListAdapter (private var list: MutableList<TestData>): RecyclerView.Adapte
                 .circleCrop()
                 .into(imageView)
 
+            val pos = adapterPosition
+            if(pos!= RecyclerView.NO_POSITION)
+            {
+                itemView.setOnClickListener {
+                    listener?.onItemClick(itemView,data,pos)
+                }
+            }
         }
     }
 
