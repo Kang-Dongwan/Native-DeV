@@ -196,7 +196,8 @@ class FriendFragment : Fragment() {
                                                                 val intent = Intent(getActivity(), ProfileDetailActivity::class.java)
                                                                 intent.putExtra("name", data.getData1())
                                                                 intent.putExtra("comment", data.getData2())
-                                                                intent.putExtra("profileImageUrl", data.getData3())
+                                                                intent.putExtra("friendUid", data.getData3())
+                                                                intent.putExtra("profileImageUrl", data.getData4())
                                                                 /*intent.putExtra("name", "testName")
                                                                 intent.putExtra("comment", "testComment")
                                                                 intent.putExtra("profileImageUrl", "testProfileImage")*/
