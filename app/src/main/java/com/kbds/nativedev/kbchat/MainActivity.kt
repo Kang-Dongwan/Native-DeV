@@ -24,7 +24,16 @@ private lateinit var nextIntent: Intent
 @Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    //--2022.08.23 뒤로가기
+    interface onBackPressedListener{
+        fun onBackPressed()
+    }
 
+    //--2022.08.23 뒤로가기
+    override fun onBackPressed() {
+        super.onBackPressed()
+        Log.d("MainActivity Back test","commit")
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
