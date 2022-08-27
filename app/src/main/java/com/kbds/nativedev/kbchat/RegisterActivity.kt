@@ -7,8 +7,11 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.kbds.nativedev.kbchat.databinding.ActivityRegisterBinding
+import com.google.firebase.database.ktx.database
+import com.google.firebase.database.DatabaseReference
 
 private lateinit var auth: FirebaseAuth
+lateinit var database: DatabaseReference
 
 class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
@@ -17,6 +20,7 @@ class RegisterActivity : AppCompatActivity() {
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
         auth = Firebase.auth
+        database = Firebase.database.reference
 
 //        val email = findViewById<EditText>(R.id.email)
 //        val pwd = findViewById<EditText>(R.id.et_pwd)
@@ -43,6 +47,12 @@ class RegisterActivity : AppCompatActivity() {
             .addOnCompleteListener(this) {
                 task -> if (task.isSuccessful) {
                 finish()
+                val user = Firebase.auth.currentUser
+                val userId = user?.uid
+                val userIdSt = userId.toString()
+
+                database.child("user/$userIdSt/email").setValue(email)
+
                 Toast.makeText(this, "회원가입 성공", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(this, "회원가입 실패", Toast.LENGTH_SHORT).show()
