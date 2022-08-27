@@ -37,7 +37,7 @@
         android:layout_marginEnd="47dp"
         android:layout_marginBottom="296dp"
         android:ems="10"
-        android:inputType="textPersonName"
+        android:inputType="textEmailAddress"
         android:text=""
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

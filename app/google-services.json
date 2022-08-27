@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "111748515757",
+    "firebase_url": "https://native-dev-chat-default-rtdb.firebaseio.com",
     "project_id": "native-dev-chat",
     "storage_bucket": "native-dev-chat.appspot.com"
   },
@@ -13,6 +14,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "111748515757-9tp97dremfmphk5us4vdk5rkd0bn659i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kbds.nativedev.kbchat",
+            "certificate_hash": "53dd4266541d65c1b640ed76b1f321090779a859"
+          }
+        },
         {
           "client_id": "111748515757-daaq4s79l3uc5kofhpnfg1oafvff74ha.apps.googleusercontent.com",
           "client_type": 3
