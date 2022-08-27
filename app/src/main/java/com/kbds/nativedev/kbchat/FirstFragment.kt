@@ -1,6 +1,6 @@
 package com.kbds.nativedev.kbchat
 
-import android.content.Context
+//import com.google.firebase.auth.ktx.auth
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -9,20 +9,23 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
-//import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
-import com.google.firebase.database.ktx.getValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import com.kbds.nativedev.kbchat.adapters.ListAdapter
 import com.kbds.nativedev.kbchat.databinding.FragmentFirstBinding
 import com.kbds.nativedev.kbchat.fragment.FriendFragment
 import kotlinx.android.synthetic.main.fragment_first.*
+
+
 class TestData(
     private var data1: String? = null,
     private var data2: String? = null,
@@ -65,6 +68,8 @@ class FirstFragment : Fragment(), MainActivity.onBackPressedListener, View.OnCli
     val myRef = database.getReference("friend")
     val databaseIns = FirebaseDatabase.getInstance().reference
     var db = FirebaseFirestore.getInstance()
+    private lateinit var listAdapter: ListAdapter
+    private lateinit var friendFragment: FriendFragment
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -88,6 +93,8 @@ class FirstFragment : Fragment(), MainActivity.onBackPressedListener, View.OnCli
         binding.buttonFirst.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
         }
+        //메뉴 세팅
+        //setHasOptionsMenu(true)
 
         friendSerchBtn.setOnClickListener {
             var userId: String = idTv!!.text.toString()
@@ -127,6 +134,36 @@ class FirstFragment : Fragment(), MainActivity.onBackPressedListener, View.OnCli
                                         }
                                     }
                                     Toast.makeText(getActivity(), "Success add User", Toast.LENGTH_LONG).show()
+
+                                    /*val navController = findNavController()
+                                    navController.run {
+                                        popBackStack()
+                                        navigate(R.id.FirstFragment)
+                                    }*/
+
+                                    /*val fm: FragmentManager = activity!!.supportFragmentManager
+                                    fm.executePendingTransactions()
+                                    Log.d("phw fragment test 111", "phwtest00 "+ fm.toString())
+                                    var frg: Fragment? = null
+                                    frg =
+                                        fm.findFragmentByTag("friendTag")
+                                    Log.d("phw fragment test 111", "phwtest000 "+ frg.toString())
+                                    val ft: FragmentTransaction =
+                                        fm.beginTransaction()
+                                    if (frg != null) {
+                                        ft.detach(frg)
+                                        Log.d("phw fragment test 111", "phwtest001")
+                                    }
+                                    if (frg != null) {
+                                        ft.attach(frg)
+                                        Log.d("phw fragment test 222", "phwtest002")
+                                    }
+                                    ft.commit()*/
+
+                                    activity?.let{
+                                        val intent = Intent(context, MainActivity::class.java)
+                                        startActivity(intent)
+                                    }
                                     return
                                 }
 
@@ -223,11 +260,12 @@ class FirstFragment : Fragment(), MainActivity.onBackPressedListener, View.OnCli
                                     Log.d("test", "test222 = "+ freindUid02) //input
                                     if(name.value?.equals(userName) == true) {
                                         Log.d("test", "test123")
+
                                         user?.let {
                                             Log.d("FirstFragment", "deleteBtn:userUid:" + user.uid)
                                             myRef.child(user.uid).child(friendUid.toString()).removeValue()
                                         }
-                                        Toast.makeText(getActivity(), "Success Delte User", Toast.LENGTH_LONG).show()
+                                         Toast.makeText(getActivity(), "Success Delte User", Toast.LENGTH_LONG).show()
                                         return
                                     }
 
@@ -275,7 +313,7 @@ class FirstFragment : Fragment(), MainActivity.onBackPressedListener, View.OnCli
         super.onDestroyView()
         _binding = null
     }
-    
+
     override fun onClick(v: View?) {
         val user = auth.currentUser
         Log.d("test", "phw333")

@@ -1,5 +1,6 @@
 package com.kbds.nativedev.kbchat.fragment
 
+//import com.google.firebase.ktx.auth
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -7,24 +8,24 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Button
-import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.gms.tasks.Task
-//import com.google.firebase.ktx.auth
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
-import com.kbds.nativedev.kbchat.adapters.ListAdapter
-import kotlinx.android.synthetic.main.fragment_friend.*
-import com.google.firebase.database.DataSnapshot //toy
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
-import com.kbds.nativedev.kbchat.*
+import com.google.firebase.ktx.Firebase
+import com.kbds.nativedev.kbchat.AddFriendsActivity
+import com.kbds.nativedev.kbchat.ProfileDetailActivity
 import com.kbds.nativedev.kbchat.R
-import kotlinx.android.synthetic.main.item_data_list.*
+import com.kbds.nativedev.kbchat.adapters.ListAdapter
+import com.kbds.nativedev.kbchat.auth
+import kotlinx.android.synthetic.main.fragment_friend.*
+
 
 class TestData(
     private var data1: String? = null,
@@ -68,8 +69,6 @@ class FriendFragment : Fragment() {
     val userRef = database1.getReference("user")
     var db = FirebaseFirestore.getInstance()
 
-
-
     var dataList: ArrayList<TestData> = arrayListOf(
         /*TestData("첫 번째 데이터1", "두 번째 데이터1", "세 번째 데이터1"),
         TestData("첫 번째 데이터2", "두 번째 데이터2", "세 번째 데이터2"),
@@ -97,10 +96,15 @@ class FriendFragment : Fragment() {
 
     }
 
+    override fun onStart() {
+        super.onStart()
+
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         var my_btn = getView()?.findViewById<Button>(R.id.addFriendBtn)
         dataList.clear();
+
         var list = dataList
         //var list: ArrayList<TestData> = requireActivity().intent!!.extras!!.get("dataList") as ArrayList<TestData>
         // Fragment에서 전달받은 list를 넘기면서 ListAdapter 생성
@@ -218,6 +222,10 @@ class FriendFragment : Fragment() {
                     }
                 }
             }
+            val ft: FragmentTransaction =
+                requireFragmentManager().beginTransaction()
+            ft.detach(this@FriendFragment).attach(this@FriendFragment).commit()
+
 
         }
         /*Toast.makeText(

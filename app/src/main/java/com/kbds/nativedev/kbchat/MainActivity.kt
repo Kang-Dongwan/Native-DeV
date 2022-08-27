@@ -34,6 +34,10 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction().replace(R.id.fragment_frame, friendFragment).commit()
     }
 
+    fun setToolbar() {
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
     private val BottomNavItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener{
         Log.d("itemId", "${it.itemId}")
         Log.d("menu_friend", "${R.id.menu_friend}")
