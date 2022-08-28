@@ -84,17 +84,16 @@ class FirstFragment : Fragment(), MainActivity.onBackPressedListener, View.OnCli
         return binding.root
 
     }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         auth = FirebaseAuth.getInstance();
         val user = auth.currentUser
 
-        binding.buttonFirst.setOnClickListener {
+        /*binding.buttonFirst.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
-        }
+        }*/
         //메뉴 세팅
-        //setHasOptionsMenu(true)
+        setHasOptionsMenu(true)
 
         friendSerchBtn.setOnClickListener {
             var userId: String = idTv!!.text.toString()
@@ -110,12 +109,16 @@ class FirstFragment : Fragment(), MainActivity.onBackPressedListener, View.OnCli
                                 var comment = snapshot.child("comment")
                                 Log.d("test", "test000 = "+ name)   //db
                                 Log.d("test", "test111 = "+ userName) //input
+                                Log.d("test", "test222 = "+ comment) //input
                                 if(name.value?.equals(userName) == true) {
                                     Log.d("test", "test123")
                                     user?.let {
                                         databaseIns.child("friend").child(user.uid).get().addOnSuccessListener {
                                             val friendKey = myRef.child(user.uid).push().key
-                                            val friend = UserModel(friendKey, userName, userComment)
+                                            //val friend = UserModel(friendKey, userName, userComment)
+                                            val friend = UserModel(friendKey, name.getValue() as String?,
+                                                comment.getValue() as String?
+                                            )
                                             if (friendKey != null) {
                                                 if (friendUid != null) {
                                                     myRef.child(user.uid).child(friendUid).setValue(friend).addOnCompleteListener {
@@ -126,6 +129,10 @@ class FirstFragment : Fragment(), MainActivity.onBackPressedListener, View.OnCli
                                                     }.addOnFailureListener { err ->
                                                         err.message?.let { it1 -> Log.d("error", it1) }
                                                     }
+                                                    activity?.let{
+                                                        val intent = Intent(context, MainActivity::class.java)
+                                                        startActivity(intent)
+                                                    }
                                                 }
                                             }
                                             /*myRef.child(user.uid).push().setValue("test123")
@@ -134,7 +141,7 @@ class FirstFragment : Fragment(), MainActivity.onBackPressedListener, View.OnCli
                                         }
                                     }
                                     Toast.makeText(getActivity(), "Success add User", Toast.LENGTH_LONG).show()
-
+                                    return;
                                     /*val navController = findNavController()
                                     navController.run {
                                         popBackStack()
@@ -160,11 +167,7 @@ class FirstFragment : Fragment(), MainActivity.onBackPressedListener, View.OnCli
                                     }
                                     ft.commit()*/
 
-                                    activity?.let{
-                                        val intent = Intent(context, MainActivity::class.java)
-                                        startActivity(intent)
-                                    }
-                                    return
+
                                 }
 
                                 //val map = snapshot.getValue(Map::class.java) as Map<String, String>
@@ -369,6 +372,7 @@ class FirstFragment : Fragment(), MainActivity.onBackPressedListener, View.OnCli
             activity?.finish()
         }
     }
+
     //--2022.08.23 end
 }
 

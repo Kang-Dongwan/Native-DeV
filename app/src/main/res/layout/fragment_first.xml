@@ -6,13 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".FirstFragment">
 
-    <Button
+    <!--<Button
         android:id="@+id/button_first"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="84dp"
         android:text="@string/next"
-        tools:ignore="MissingConstraints" />
+        tools:ignore="MissingConstraints" />-->
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dp"
