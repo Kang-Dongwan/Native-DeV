@@ -11,13 +11,14 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
+//import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.kbds.nativedev.kbchat.databinding.FragmentFirstBinding
 import com.kbds.nativedev.kbchat.fragment.FriendFragment
@@ -28,7 +29,8 @@ private lateinit var auth: FirebaseAuth
 class TestData(
     private var data1: String? = null,
     private var data2: String? = null,
-    private var data3: String? = null
+    private var data3: String? = null,
+
 ){
     fun getData1(): String? {
         return data1
@@ -48,6 +50,7 @@ class TestData(
     fun setData3(type: String) {
         this.data3 = data3
     }
+
 }
 
 /**
@@ -58,12 +61,13 @@ data class UserModel(
     var name: String? = null,
     var comment: String? = null
 )
-class FirstFragment : Fragment(), View.OnClickListener {
+class FirstFragment : Fragment(), MainActivity.onBackPressedListener, View.OnClickListener {
 
     private var _binding: FragmentFirstBinding? = null
     val database = Firebase.database
     val myRef = database.getReference("friend")
     val databaseIns = FirebaseDatabase.getInstance().reference
+    var db = FirebaseFirestore.getInstance()
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -82,7 +86,7 @@ class FirstFragment : Fragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         auth = FirebaseAuth.getInstance();
-        val user = Firebase.auth.currentUser
+        val user = auth.currentUser
 
         binding.buttonFirst.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
@@ -100,8 +104,8 @@ class FirstFragment : Fragment(), View.OnClickListener {
                                 var friendUid = snapshot.key
                                 var name = snapshot.child("name")
                                 var comment = snapshot.child("comment")
-                                Log.d("test", "test000 = "+ name)
-                                Log.d("test", "test111 = "+ userName)
+                                Log.d("test", "test000 = "+ name)   //db
+                                Log.d("test", "test111 = "+ userName) //input
                                 if(name.value?.equals(userName) == true) {
                                     Log.d("test", "test123")
                                     user?.let {
@@ -128,13 +132,13 @@ class FirstFragment : Fragment(), View.OnClickListener {
                                     Toast.makeText(getActivity(), "Success add User", Toast.LENGTH_LONG).show()
                                     return
                                 }
-                                Toast.makeText(getActivity(), "Not Found User", Toast.LENGTH_LONG).show()
 
                                 //val map = snapshot.getValue(Map::class.java) as Map<String, String>
                                 //val comment = map.get("comment").toString()
                                 //val name = map.get("name").toString()
                         Log.d("FirstFragment", "ValueEventListener : " + snapshot.value + " a = " + name + "a.value = "+ comment.value)
                     }
+                    Toast.makeText(getActivity(), "Not Found User", Toast.LENGTH_LONG).show()
                 }
 
                 override fun onCancelled(databaseError: DatabaseError) {}
@@ -197,6 +201,76 @@ class FirstFragment : Fragment(), View.OnClickListener {
                         }*/
                     }
                 }
+
+        //--toy
+        deleteBtn.setOnClickListener {
+                    Log.d("FirstFragment", "deleteBtn !")
+                    var userId: String = idTv!!.text.toString()
+                    var userName: String = nameTv!!.text.toString()
+                    var userComment: String = commentTv!!.text.toString();
+                    Log.d("USER NAME", "USER NAME 01 = "+ userName)   //input
+
+                    if (userName.isNotEmpty()) {
+                        Log.d("USER NAME", "USER NAME 02 = "+ userName)   //input
+                        FirebaseDatabase.getInstance().reference.child("user").addValueEventListener(object :
+                            ValueEventListener {
+                            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                for (snapshot in dataSnapshot.children) {
+                                    var friendUid = snapshot.key
+                                    var name = snapshot.child("name")
+                                    var comment = snapshot.child("comment")
+                                    var freindUid02 = snapshot.child("uid")
+
+                                    Log.d("test", "test000 = "+ name)   //db
+                                    Log.d("test", "test111 = "+ userName) //input
+                                    Log.d("test", "test222 = "+ freindUid02) //input
+                                    if(name.value?.equals(userName) == true) {
+                                        Log.d("test", "test123")
+                                        user?.let {
+                                            Log.d("FirstFragment", "deleteBtn:userUid:" + user.uid)
+                                            myRef.child(user.uid).child(friendUid.toString()).removeValue()
+                                        }
+                                        Toast.makeText(getActivity(), "Success Delte User", Toast.LENGTH_LONG).show()
+                                        return
+                                    }
+
+                                    //val map = snapshot.getValue(Map::class.java) as Map<String, String>
+                                    //val comment = map.get("comment").toString()
+                                    //val name = map.get("name").toString()
+                                    Log.d("FirstFragment", "ValueEventListener : " + snapshot.value + " a = " + name + "a.value = "+ comment)
+                                }
+                                Toast.makeText(getActivity(), "Not Found User", Toast.LENGTH_LONG).show()
+                            }
+
+                            override fun onCancelled(databaseError: DatabaseError) {}
+                        })
+                    }
+                    /*var userId: String = idTv!!.text.toString()
+                    var userName: String = nameTv!!.text.toString()
+                    var userComment: String = commentTv!!.text.toString();
+
+                    if (userName.isNotEmpty()) {
+                        user?.let {
+                            Log.d("FirstFragment", "deleteBtn:userName:" + userName)
+
+                            databaseIns.child("friend").child(user.uid).get().addOnSuccessListener {
+                                val friendKey = myRef.child(user.uid).push().key
+                                val friend = UserModel(friendKey, userName, userComment)
+
+                                if (friendKey != null) {
+                                    Log.d("FirstFragment", "deleteBtn:friendKey:" + friendKey)
+                                    myRef.child(user.uid).child(friendKey)
+                                        .setValue(friend).addOnCompleteListener
+
+                                    mStorage.getReference().child("userImages").child("uid/")
+                                        .child(contentslist.get(position).photoName).delete()
+                                }
+                            }
+                        }
+                    }*/
+
+                }//end deleteBtn
+
         }
 
 
@@ -204,9 +278,9 @@ class FirstFragment : Fragment(), View.OnClickListener {
         super.onDestroyView()
         _binding = null
     }
-
+    
     override fun onClick(v: View?) {
-        val user = Firebase.auth.currentUser
+        val user = auth.currentUser
         Log.d("test", "phw333")
         when (v?.id) {
             R.id.addBtn -> {
@@ -253,6 +327,14 @@ class FirstFragment : Fragment(), View.OnClickListener {
             }
         }
     }
+    //--2022.08.23 뒤로가기
+    override fun onBackPressed(){
+
+        if(this is FirstFragment){
+            activity?.finish()
+        }
+    }
+    //--2022.08.23 end
 }
 
 

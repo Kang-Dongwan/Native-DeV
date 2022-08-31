@@ -28,6 +28,7 @@
         <entry key="app/src/main/res/layout/item_chat.xml" value="0.13272543059777103" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.11145833333333334" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.12208713272543059" />
+        <entry key="app/src/main/res/layout/activity_profile_detail.xml" value="0.19791666666666666" />
         <entry key="app/src/main/res/layout/content_add_friends.xml" value="0.11145833333333334" />
         <entry key="app/src/main/res/layout/fragment_first.xml" value="0.11145833333333334" />
         <entry key="app/src/main/res/layout/fragment_friend.xml" value="0.16983695652173914" />

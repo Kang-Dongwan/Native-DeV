@@ -64,7 +64,7 @@ class SettingFragment : Fragment() {
             if(result.resultCode == AppCompatActivity.RESULT_OK) {
                 imageUri = result.data?.data //이미지 경로 원본
                 profile_imageview.setImageURI(imageUri) //이미지 뷰를 바꿈
-
+/*
                     //fireStorage.child("userImages/$uid/photo").delete().addOnSuccessListener {
                         fireStorage.child("userImages/$uid/photo").putFile(imageUri!!)
                             .addOnSuccessListener {
@@ -77,7 +77,7 @@ class SettingFragment : Fragment() {
                                 }
                             }
                     //}
-
+*/
                 Log.d("이미지", "성공")
                 //Toast.makeText(requireContext(), "프로필사진이 변경되었습니다.", Toast.LENGTH_SHORT).show()
             }
@@ -150,8 +150,9 @@ class SettingFragment : Fragment() {
             Log.i("firebase", "Got value ${it.value}")
             if (it.value != null){
                 val map = it.value as HashMap<String, Any>
-                name.text = map.get("name").toString()
-                comment.text = map.get("comment").toString()
+
+                name.text = map.get("name")?.toString()
+                comment.text = map.get("comment")?.toString()
 
                 var imageUrl = map.get("profileImageUrl")?.toString()
                 //Log.i("imageUrl", "Got value ${imageUrl}")
@@ -200,6 +201,18 @@ class SettingFragment : Fragment() {
                 database.child("user/$uid/comment").setValue(comment.text.toString())
                 comment.clearFocus()
                 Toast.makeText(requireContext(), "상태메시지가 변경되었습니다.", Toast.LENGTH_SHORT).show()
+            }
+            if(imageUri != null){
+                fireStorage.child("userImages/${Companion.uid}/photo").putFile(imageUri!!)
+                    .addOnSuccessListener {
+                        fireStorage.child("userImages/${Companion.uid}/photo").downloadUrl.addOnSuccessListener {
+                            val photoUri: Uri = it
+                            println("$photoUri")
+                            fireDatabase.child("user/${Companion.uid}/profileImageUrl")
+                                .setValue(photoUri.toString())
+                            Toast.makeText(requireContext(), "프로필사진이 변경되었습니다.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
             }
         }
 
