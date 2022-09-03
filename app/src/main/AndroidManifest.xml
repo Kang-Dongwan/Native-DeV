@@ -22,6 +22,7 @@
             android:label="@string/title_activity_add_friends"
             android:theme="@style/Theme.KBChat.NoActionBar" />
         <activity android:name=".RegisterActivity" />
+        <activity android:name=".ChatActivity" />
         <activity
             android:name=".LoginActivity"
             android:exported="true">
