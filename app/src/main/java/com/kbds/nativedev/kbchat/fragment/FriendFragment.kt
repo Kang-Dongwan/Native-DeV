@@ -147,8 +147,8 @@ class FriendFragment : Fragment() {
                                             override fun onDataChange(dataSnapshot: DataSnapshot) {
                                                 for (snapshot in dataSnapshot.children) {
                                                     var uid = snapshot.key
-                                                    var name = snapshot.child("name")
-                                                    var comment = snapshot.child("comment")
+                                                    var name = snapshot.child("name").getValue().toString()
+                                                    var comment = snapshot.child("comment").getValue().toString()
                                                     var freindUid02 = snapshot.child("uid")
                                                     var profileImageUrl = ""
                                                     if(snapshot.child("profileImageUrl").getValue() == null){
@@ -162,14 +162,14 @@ class FriendFragment : Fragment() {
                                                     Log.d("test", "LSM USER.profileImageUrl = " + profileImageUrl)
 
                                                     if (uid.toString().equals(friendUid.toString()) == true) {
-                                                        Log.d("test","LSM USER.name==FRIEND.name " + name.getValue().toString())
-                                                        imageHash.put(name.getValue().toString(),profileImageUrl)
+                                                        Log.d("test","LSM USER.name==FRIEND.name " + name)
+                                                        imageHash.put(name,profileImageUrl)
                                                         //imageUrl = profileImageUrl.toString()
                                                         Log.d("test", "imageHash.profileImageUrl = " + profileImageUrl)
                                                         var myMutableList1: ArrayList<TestData> = arrayListOf(
                                                             TestData(
-                                                                friendName.toString(),
-                                                                friendComment.toString(),
+                                                                name.toString(),
+                                                                comment.toString(),
                                                                 friendUid.toString(),
                                                                 profileImageUrl
                                                             )

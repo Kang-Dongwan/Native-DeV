@@ -8,9 +8,8 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import com.bumptech.glide.Glide
-import com.google.android.material.internal.ContextUtils.getActivity
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -28,6 +27,7 @@ class ProfileDetailActivity : AppCompatActivity() {
 
     private lateinit var deleteFriendBtn: Button
     private lateinit var chatBtn: Button
+    private lateinit var chatFragmet: ChatFragment
     val database = Firebase.database
     val myRef = database.getReference("friend")
     val databaseIns = FirebaseDatabase.getInstance().reference
@@ -126,7 +126,20 @@ class ProfileDetailActivity : AppCompatActivity() {
                 mBundle.putString("friendUid",friendUid.toString())
                 mFragment.arguments = mBundle
                 mFragmentTransaction.add(R.id.container, mFragment).commit()*/
+            //finish()
+            val nextIntent = Intent(this, MainActivity::class.java)
+            nextIntent.putExtra("friendUid", friendUid)
+            startActivity(nextIntent)
 
+            val bundle = Bundle()
+            bundle.putString("friendUid", friendUid)
+            val myFrag = ChatFragment()
+            //myFrag.setArguments(bundle)
+            //mFragmentTransaction.replace(R.id.fragment_frame, myFrag).commit()
+
+            //chatFragmet = ChatFragment.newInstance()
+            //chatFragmet.setArguments(bundle)
+            //supportFragmentManager.beginTransaction().replace(R.id.container, chatFragmet).commit()
         }
     }
 

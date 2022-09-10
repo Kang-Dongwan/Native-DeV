@@ -114,7 +114,8 @@ class FirstFragment : Fragment(), MainActivity.onBackPressedListener, View.OnCli
                             Log.d("test", "test123")
                             user?.let {
                                 databaseIns.child("friend").child(user.uid).get().addOnSuccessListener {
-                                    val friendKey = myRef.child(user.uid).push().key
+                                    //val friendKey = myRef.child(user.uid).push().key
+                                    val friendKey = friendUid
                                     //val friend = UserModel(friendKey, userName, userComment)
                                     val friend = UserModel(friendKey, name.getValue() as String?,
                                         comment.getValue() as String?
