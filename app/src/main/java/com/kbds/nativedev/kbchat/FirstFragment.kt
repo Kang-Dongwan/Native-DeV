@@ -59,7 +59,8 @@ class TestData(
 data class UserModel(
     var uid: String? = null,
     var name: String? = null,
-    var comment: String? = null
+    var comment: String? = null,
+    var blockYn: String? = null
 )
 class FirstFragment : Fragment(), MainActivity.onBackPressedListener, View.OnClickListener {
 
@@ -118,7 +119,7 @@ class FirstFragment : Fragment(), MainActivity.onBackPressedListener, View.OnCli
                                     val friendKey = friendUid
                                     //val friend = UserModel(friendKey, userName, userComment)
                                     val friend = UserModel(friendKey, name.getValue() as String?,
-                                        comment.getValue() as String?
+                                        comment.getValue() as String?, "N"
                                     )
                                     if (friendKey != null) {
                                         if (friendUid != null) {
@@ -213,7 +214,7 @@ class FirstFragment : Fragment(), MainActivity.onBackPressedListener, View.OnCli
                 user?.let {
                     databaseIns.child("friend").child(user.uid).get().addOnSuccessListener {
                         val friendKey = myRef.child(user.uid).push().key
-                        val friend = UserModel(friendKey, userName, userComment)
+                        val friend = UserModel(friendKey, userName, userComment, "false")
                         if (friendKey != null) {
                             myRef.child(user.uid).child(friendKey).setValue(friend).addOnCompleteListener {
                                 Log.d("test", "Success")

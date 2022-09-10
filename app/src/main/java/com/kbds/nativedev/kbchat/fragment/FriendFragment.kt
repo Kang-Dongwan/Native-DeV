@@ -8,11 +8,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.ktx.auth
 //import com.google.firebase.ktx.auth
 import com.google.firebase.database.*
@@ -21,11 +19,9 @@ import com.google.firebase.ktx.Firebase
 import com.kbds.nativedev.kbchat.adapters.ListAdapter
 import kotlinx.android.synthetic.main.fragment_friend.*
 import com.google.firebase.database.DataSnapshot //toy
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.kbds.nativedev.kbchat.*
 import com.kbds.nativedev.kbchat.R
-import kotlinx.android.synthetic.main.item_data_list.*
 
 class TestData(
     private var data1: String? = null,
@@ -64,6 +60,7 @@ class FriendFragment : Fragment() {
     private lateinit var database: DatabaseReference
     private lateinit var data: MutableMap<String, String>
     private lateinit var data1: MutableMap<String, String>
+    private var blockFlag: String = "false"
     val database1 = Firebase.database
     val myRef = database1.getReference("friend")
     val userRef = database1.getReference("user")
@@ -132,10 +129,12 @@ class FriendFragment : Fragment() {
                                 Log.d("test", "phw dataList.size0 = " + data1.toString()) //uid=-NA-NA5aReWLpsU7sRhL, -NA-N0AH1g8x6AY_7O3L
                                 Log.d("test", "LSM dataList.uid = " + data1.get("uid"))
                                 Log.d("test", "LSM FRIEND.name = " + data1.get("name"))
+                                Log.d("test", "LSM FRIEND.blockYn = " + data1.get("blockYn"))
                                 var friendUid = it1.key
                                 var imageHash = HashMap<String, Any>()
                                 var friendName = data1.get("name")
                                 var friendComment = data1.get("comment")
+                                var blockYn = data1.get("blockYn")
 
                                 Log.d(
                                     "test", "LSM USER.friendUid.toString() = " + friendUid.toString()
@@ -148,6 +147,7 @@ class FriendFragment : Fragment() {
                                                 for (snapshot in dataSnapshot.children) {
                                                     var uid = snapshot.key
                                                     var name = snapshot.child("name").getValue().toString()
+                                                    var email = snapshot.child("email").getValue().toString()
                                                     var comment = snapshot.child("comment").getValue().toString()
                                                     var freindUid02 = snapshot.child("uid")
                                                     var profileImageUrl = ""
@@ -162,21 +162,50 @@ class FriendFragment : Fragment() {
                                                     Log.d("test", "LSM USER.profileImageUrl = " + profileImageUrl)
 
                                                     if (uid.toString().equals(friendUid.toString()) == true) {
-                                                        Log.d("test","LSM USER.name==FRIEND.name " + name)
-                                                        imageHash.put(name,profileImageUrl)
-                                                        //imageUrl = profileImageUrl.toString()
-                                                        Log.d("test", "imageHash.profileImageUrl = " + profileImageUrl)
-                                                        var myMutableList1: ArrayList<TestData> = arrayListOf(
-                                                            TestData(
-                                                                name.toString(),
-                                                                comment.toString(),
-                                                                friendUid.toString(),
-                                                                profileImageUrl
-                                                            )
-                                                        )
-
+                                                        if (blockFlag == "true") {
+                                                            if ("Y".equals(blockYn) == true && uid.equals(friendUid)) {
+                                                                Log.d("test","LSM USER.name==FRIEND.name " + name)
+                                                                Log.d("test","PHW BLOCK TEST1 " + blockYn)
+                                                                imageHash.put(name,profileImageUrl)
+                                                                //imageUrl = profileImageUrl.toString()
+                                                                Log.d("test", "imageHash.profileImageUrl = " + profileImageUrl)
+                                                                var myMutableList1: ArrayList<TestData> = arrayListOf(
+                                                                    TestData(
+                                                                        name.toString(),
+                                                                        comment.toString(),
+                                                                        friendUid.toString(),
+                                                                        profileImageUrl
+                                                                    )
+                                                                )
+                                                                dataList.addAll(myMutableList1);
+                                                            }
+                                                        } else {
+                                                            if ("Y".equals(blockYn) == false && uid.equals(friendUid)) {
+                                                                Log.d(
+                                                                    "test",
+                                                                    "LSM USER.name==FRIEND.name " + name
+                                                                )
+                                                                Log.d("test","PHW BLOCK TEST2 " + blockYn)
+                                                                imageHash.put(name, profileImageUrl)
+                                                                //imageUrl = profileImageUrl.toString()
+                                                                Log.d(
+                                                                    "test",
+                                                                    "imageHash.profileImageUrl = " + profileImageUrl
+                                                                )
+                                                                var myMutableList1: ArrayList<TestData> =
+                                                                    arrayListOf(
+                                                                        TestData(
+                                                                            name.toString(),
+                                                                            comment.toString(),
+                                                                            friendUid.toString(),
+                                                                            profileImageUrl
+                                                                        )
+                                                                    )
+                                                                dataList.addAll(myMutableList1);
+                                                            }
+                                                        }
                                                         Log.d("test", "imageHash.get = " + imageHash.get(data1.get("name").toString()))
-                                                        dataList.addAll(myMutableList1);
+
                                                         list = dataList;
                                                         Log.d("test", "phw dataList.size1 = " + data.keys)
                                                         Log.d("test", "phw dataList.size2 = " + dataList.size)
@@ -199,6 +228,7 @@ class FriendFragment : Fragment() {
                                                                 intent.putExtra("comment", data.getData2())
                                                                 intent.putExtra("friendUid", data.getData3())
                                                                 intent.putExtra("profileImageUrl", data.getData4())
+                                                                intent.putExtra("blockYn", blockYn)
                                                                 /*intent.putExtra("name", "testName")
                                                                 intent.putExtra("comment", "testComment")
                                                                 intent.putExtra("profileImageUrl", "testProfileImage")*/
@@ -232,6 +262,20 @@ class FriendFragment : Fragment() {
             val intent = Intent(activity, AddFriendsActivity::class.java)
             startActivity(intent)
 
+        }
+
+        blkFriendBtn.setOnClickListener {
+            dataList.clear()
+            var list = dataList
+            if (blockFlag == "false") {
+                blockFlag = "true"
+                blkFriendBtn.text = "친구목록"
+            }
+            else {
+                blockFlag = "false"
+                blkFriendBtn.text = "차단목록"
+            }
+            this.onViewCreated(view, savedInstanceState)
         }
 
     }

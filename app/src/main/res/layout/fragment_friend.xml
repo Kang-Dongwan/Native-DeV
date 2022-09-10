@@ -21,12 +21,24 @@
         android:layout_marginRight="0dp">
 
     </FrameLayout>-->
-    <Button
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="친구추가"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+    <Button
         android:id="@+id/addFriendBtn"
-        ></Button>
+        android:layout_width="202dp"
+        android:layout_height="50dp"
+        android:text="친구추가"></Button>
+
+    <Button
+        android:id="@+id/blkFriendBtn"
+        android:layout_width="202dp"
+        android:layout_height="50dp"
+        android:layout_gravity="end"
+        android:text="차단목록"></Button>
+    </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/friendTv"
