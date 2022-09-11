@@ -24,6 +24,7 @@ class ListAdapter (private var list: MutableList<TestData>): RecyclerView.Adapte
         var data2Text: TextView = itemView!!.findViewById(R.id.data2Text)
         var data3Text: TextView = itemView!!.findViewById(R.id.data3Text)
         var data4Text: TextView = itemView!!.findViewById(R.id.data4Text)//toy
+        var data5Text: TextView = itemView!!.findViewById(R.id.data5Text)//blockYn
         var imageView: ImageView = itemView!!.findViewById(R.id.home_item_iv)//toy
 
         // onBindViewHolder의 역할을 대신한다.
@@ -31,6 +32,7 @@ class ListAdapter (private var list: MutableList<TestData>): RecyclerView.Adapte
             data1Text.text = data.getData1()
             data2Text.text = data.getData2()
             data3Text.text = data.getData3()
+            data5Text.text = data.getData5()
             //data4Text.text = data.getData4()//toy
             Log.d("test", "LSM USER.name==FRIEND.name01 :" + data1Text.text)
             Log.d("test", "LSM USER.name==FRIEND.imageUrl :" + data.getData4())

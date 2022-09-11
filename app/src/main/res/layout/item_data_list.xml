@@ -81,5 +81,18 @@
             app:layout_constraintStart_toStartOf="@id/home_item_iv"
             app:layout_constraintBottom_toBottomOf="@id/data3Text"/>
 
+        <TextView
+            android:id="@+id/data5Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="65dp"
+            android:layout_marginLeft="26dp"
+            android:layout_marginTop="6dp"
+            android:textColor="#8A252525"
+            android:visibility="invisible"
+            app:layout_constraintTop_toBottomOf="@id/home_item_iv"
+            app:layout_constraintStart_toStartOf="@id/home_item_iv"
+            />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -27,7 +27,8 @@ class TestData(
     private var data1: String? = null,
     private var data2: String? = null,
     private var data3: String? = null,
-    private var data4: String? = null //toy
+    private var data4: String? = null, //toy
+    private var data5: String? = null //blockYn
 ){
     fun getData1(): String? {
         return data1
@@ -52,6 +53,12 @@ class TestData(
     }
     fun setData4(type: String) { //toy
         this.data4 = data4
+    }
+    fun getData5(): String? { //blockYn
+        return data5
+    }
+    fun setData5(type: String) {
+        this.data5 = data5
     }
 }
 class FriendFragment : Fragment() {
@@ -149,6 +156,7 @@ class FriendFragment : Fragment() {
                                                     var name = snapshot.child("name").getValue().toString()
                                                     var email = snapshot.child("email").getValue().toString()
                                                     var comment = snapshot.child("comment").getValue().toString()
+                                                    //var blockYn = snapshot.child("blockYn").getValue().toString()
                                                     var freindUid02 = snapshot.child("uid")
                                                     var profileImageUrl = ""
                                                     if(snapshot.child("profileImageUrl").getValue() == null){
@@ -174,7 +182,8 @@ class FriendFragment : Fragment() {
                                                                         name.toString(),
                                                                         comment.toString(),
                                                                         friendUid.toString(),
-                                                                        profileImageUrl
+                                                                        profileImageUrl,
+                                                                        blockYn
                                                                     )
                                                                 )
                                                                 dataList.addAll(myMutableList1);
@@ -198,7 +207,8 @@ class FriendFragment : Fragment() {
                                                                             name.toString(),
                                                                             comment.toString(),
                                                                             friendUid.toString(),
-                                                                            profileImageUrl
+                                                                            profileImageUrl,
+                                                                            blockYn
                                                                         )
                                                                     )
                                                                 dataList.addAll(myMutableList1);
@@ -228,7 +238,7 @@ class FriendFragment : Fragment() {
                                                                 intent.putExtra("comment", data.getData2())
                                                                 intent.putExtra("friendUid", data.getData3())
                                                                 intent.putExtra("profileImageUrl", data.getData4())
-                                                                intent.putExtra("blockYn", blockYn)
+                                                                intent.putExtra("blockYn", data.getData5())
                                                                 /*intent.putExtra("name", "testName")
                                                                 intent.putExtra("comment", "testComment")
                                                                 intent.putExtra("profileImageUrl", "testProfileImage")*/

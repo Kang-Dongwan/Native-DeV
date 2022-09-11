@@ -54,6 +54,11 @@ class ProfileDetailActivity : AppCompatActivity() {
         val blockYn = intent.getStringExtra("blockYn")
 
         Log.d("test", "phw blockYn = " + blockYn)
+        if("Y".equals(blockYn)) {
+            blkFriendBtn.text = "차단해제"
+        } else {
+            blkFriendBtn.text = "차단하기"
+        }
 
         textView1.text = "$name"
         textView2.text = "$comment"
@@ -144,56 +149,159 @@ class ProfileDetailActivity : AppCompatActivity() {
             //supportFragmentManager.beginTransaction().replace(R.id.container, chatFragmet).commit()
         }
         blkFriendBtn.setOnClickListener {
-            val builder = AlertDialog.Builder(this)
-            builder.setTitle("친구차단")
-                .setMessage("현재 친구를 차단하시겠습니까?")
-                .setPositiveButton("확인",
-                    DialogInterface.OnClickListener{ dialog, id ->
-                        FirebaseDatabase.getInstance().reference.child("user").addValueEventListener(object :
-                            ValueEventListener {
-                            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                                for (snapshot in dataSnapshot.children) {
-                                    var friendUid = snapshot.key
-                                    var email = snapshot.child("name")
-                                    var comment = snapshot.child("comment")
-                                    var freindUid02 = snapshot.child("uid")
+            if(!"Y".equals(blockYn)) {
+                val builder = AlertDialog.Builder(this)
+                builder.setTitle("친구차단")
+                    .setMessage("현재 친구를 차단하시겠습니까?")
+                    .setPositiveButton("확인",
+                        DialogInterface.OnClickListener { dialog, id ->
+                            FirebaseDatabase.getInstance().reference.child("user")
+                                .addValueEventListener(object :
+                                    ValueEventListener {
+                                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                        for (snapshot in dataSnapshot.children) {
+                                            var friendUid = snapshot.key
+                                            var email = snapshot.child("name")
+                                            var comment = snapshot.child("comment")
+                                            var freindUid02 = snapshot.child("uid")
 
-                                    Log.d("test", "test000 = "+ name)   //db
-                                    //Log.d("test", "test111 = "+ userName) //input
-                                    Log.d("test", "test222 = "+ freindUid02) //input
-                                    if(email.value?.equals(name) == true) {
-                                        Log.d("test", "test123")
-                                        user?.let {
-                                            Log.d("FirstFragment", "deleteBtn:userUid:" + user.uid)
-                                            val friend = UserModel(friendUid, email.getValue().toString(), comment.getValue().toString(), "Y")
+                                            Log.d("test", "test000 = " + name)   //db
+                                            //Log.d("test", "test111 = "+ userName) //input
+                                            Log.d("test", "test222 = " + freindUid02) //input
+                                            if (email.value?.equals(name) == true) {
+                                                Log.d("test", "test123")
+                                                user?.let {
+                                                    Log.d(
+                                                        "FirstFragment",
+                                                        "deleteBtn:userUid:" + user.uid
+                                                    )
+                                                    val friend = UserModel(
+                                                        friendUid,
+                                                        email.getValue().toString(),
+                                                        comment.getValue().toString(),
+                                                        "Y"
+                                                    )
 
-                                            myRef.child(user.uid).child(friendUid.toString()).setValue(friend)
-                                            Toast.makeText(this@ProfileDetailActivity, "친구차단 성공", Toast.LENGTH_LONG).show()
-                                            val nextIntent = Intent(this@ProfileDetailActivity, MainActivity::class.java)
-                                            startActivity(nextIntent)
-                                            return
+                                                    myRef.child(user.uid)
+                                                        .child(friendUid.toString())
+                                                        .setValue(friend)
+                                                    Toast.makeText(
+                                                        this@ProfileDetailActivity,
+                                                        "친구차단 성공",
+                                                        Toast.LENGTH_LONG
+                                                    ).show()
+                                                    val nextIntent = Intent(
+                                                        this@ProfileDetailActivity,
+                                                        MainActivity::class.java
+                                                    )
+                                                    startActivity(nextIntent)
+                                                    return
+                                                }
+                                            }
+
+                                            //val map = snapshot.getValue(Map::class.java) as Map<String, String>
+                                            //val comment = map.get("comment").toString()
+                                            //val name = map.get("name").toString()
+                                            Log.d(
+                                                "FirstFragment",
+                                                "ValueEventListener : " + snapshot.value + " a = " + name + "a.value = " + comment
+                                            )
                                         }
+                                        Toast.makeText(
+                                            this@ProfileDetailActivity,
+                                            "친구차단 실패",
+                                            Toast.LENGTH_LONG
+                                        ).show()
                                     }
 
-                                    //val map = snapshot.getValue(Map::class.java) as Map<String, String>
-                                    //val comment = map.get("comment").toString()
-                                    //val name = map.get("name").toString()
-                                    Log.d("FirstFragment", "ValueEventListener : " + snapshot.value + " a = " + name + "a.value = "+ comment)
-                                }
-                                Toast.makeText(this@ProfileDetailActivity, "친구차단 실패", Toast.LENGTH_LONG).show()
-                            }
-
-                            override fun onCancelled(databaseError: DatabaseError) {}
+                                    override fun onCancelled(databaseError: DatabaseError) {}
+                                })
+                            //Toast.makeText(this, "친구삭제가 완료돠었습니다.", Toast.LENGTH_SHORT)
+                            //    .show()
                         })
-                        //Toast.makeText(this, "친구삭제가 완료돠었습니다.", Toast.LENGTH_SHORT)
-                        //    .show()
-                    })
-                .setNegativeButton("취소",
-                    DialogInterface.OnClickListener{ dialog, id ->
-                        Toast.makeText(this, "친구삭제에 실패하였습니다.", Toast.LENGTH_SHORT)
-                            .show()
-                    })
-            builder.show()
+                    .setNegativeButton("취소",
+                        DialogInterface.OnClickListener { dialog, id ->
+                            Toast.makeText(this, "친구차단에 실패하였습니다.", Toast.LENGTH_SHORT)
+                                .show()
+                        })
+                builder.show()
+            } else {
+                val builder = AlertDialog.Builder(this)
+                builder.setTitle("차단해제")
+                    .setMessage("현재 친구를 차단해제 하시겠습니까?")
+                    .setPositiveButton("확인",
+                        DialogInterface.OnClickListener { dialog, id ->
+                            FirebaseDatabase.getInstance().reference.child("user")
+                                .addValueEventListener(object :
+                                    ValueEventListener {
+                                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                        for (snapshot in dataSnapshot.children) {
+                                            var friendUid = snapshot.key
+                                            var email = snapshot.child("name")
+                                            var comment = snapshot.child("comment")
+                                            var freindUid02 = snapshot.child("uid")
+
+                                            Log.d("test", "test000 = " + name)   //db
+                                            //Log.d("test", "test111 = "+ userName) //input
+                                            Log.d("test", "test222 = " + freindUid02) //input
+                                            if (email.value?.equals(name) == true) {
+                                                Log.d("test", "test123")
+                                                user?.let {
+                                                    Log.d(
+                                                        "FirstFragment",
+                                                        "deleteBtn:userUid:" + user.uid
+                                                    )
+                                                    val friend = UserModel(
+                                                        friendUid,
+                                                        email.getValue().toString(),
+                                                        comment.getValue().toString(),
+                                                        "N"
+                                                    )
+
+                                                    myRef.child(user.uid)
+                                                        .child(friendUid.toString())
+                                                        .setValue(friend)
+                                                    Toast.makeText(
+                                                        this@ProfileDetailActivity,
+                                                        "차단해제 성공",
+                                                        Toast.LENGTH_LONG
+                                                    ).show()
+                                                    val nextIntent = Intent(
+                                                        this@ProfileDetailActivity,
+                                                        MainActivity::class.java
+                                                    )
+                                                    startActivity(nextIntent)
+                                                    return
+                                                }
+                                            }
+
+                                            //val map = snapshot.getValue(Map::class.java) as Map<String, String>
+                                            //val comment = map.get("comment").toString()
+                                            //val name = map.get("name").toString()
+                                            Log.d(
+                                                "FirstFragment",
+                                                "ValueEventListener : " + snapshot.value + " a = " + name + "a.value = " + comment
+                                            )
+                                        }
+                                        Toast.makeText(
+                                            this@ProfileDetailActivity,
+                                            "차단해제 실패",
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                    }
+
+                                    override fun onCancelled(databaseError: DatabaseError) {}
+                                })
+                            //Toast.makeText(this, "친구삭제가 완료돠었습니다.", Toast.LENGTH_SHORT)
+                            //    .show()
+                        })
+                    .setNegativeButton("취소",
+                        DialogInterface.OnClickListener { dialog, id ->
+                            Toast.makeText(this, "차단해제에 실패하였습니다.", Toast.LENGTH_SHORT)
+                                .show()
+                        })
+                builder.show()
+            }
         }
     }
 
