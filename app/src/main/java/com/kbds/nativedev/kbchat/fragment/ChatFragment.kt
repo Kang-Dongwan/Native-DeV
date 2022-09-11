@@ -1,6 +1,7 @@
 package com.kbds.nativedev.kbchat.fragment
 
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -12,6 +13,8 @@ import android.widget.TextView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import com.kbds.nativedev.kbchat.R
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.*
@@ -146,6 +149,8 @@ class ChatFragment : Fragment() {
             if(user != null){
 
                 // 사용자가 들어가있는 채팅방들
+                // addListenerForSingleValueEvent -> 한번만 데이터를 가져오고 연결을 닫아버림
+                // addValueEventListener -> db가 변경될때마다 호출
                 database.child("chatList").child(user.uid).addValueEventListener(object : ValueEventListener{
                     override fun onCancelled(error: DatabaseError) {}
 
@@ -166,9 +171,19 @@ class ChatFragment : Fragment() {
                                 Log.d("test", "lastMessage => " + data1.get("lastMessage"))
 
                                 var chatId = snapshot.key
-                                var chatName = data1.get("chatName")
-                                var lastMessage = data1.get("lastMessage")
-                                var chatImageUrl = data1.get("chatImageUrl").toString()
+                                var chatName = data1.get("chatName").toString()
+                                var lastMessage = ""
+                                var chatImageUrl = ""
+
+
+                                if(data1.get("lastMessage") != null){
+                                    lastMessage = data1.get("lastMessage").toString()
+                                }
+
+                                if(data1.get("chatImageUrl") != null){
+                                    chatImageUrl = data1.get("chatImageUrl").toString()
+                                }
+
                                 var delYn = data1.get("delYn")
 
                                 Log.d("test", "msgCnt => " + msgCnt)
@@ -177,8 +192,8 @@ class ChatFragment : Fragment() {
                                     ChatListModel(
                                         uid,
                                         chatId.toString(),
-                                        chatName.toString(),
-                                        lastMessage.toString(),
+                                        chatName,
+                                        lastMessage,
                                         chatImageUrl,
                                         delYn,
                                         msgCnt
@@ -261,26 +276,23 @@ class ChatFragment : Fragment() {
             var chatId = chatList[position].getChatId().toString()
             var chatName = chatList[position].getChatName().toString()
             var lastMessage = chatList[position].getLastMessage().toString()
-            var chatImageUrl = chatList[position].getChatImageUrl().toString()
+            var chatImageUrl = chatList[position].getChatImageUrl()
             var msgCnt = chatList[position].getMsgCnt()
 
 
             if(chatImageUrl != null){
-                Glide.with(holder.imageView.context).load(chatImageUrl).into(holder.imageView)
+                println("chatImageUrl => " + chatImageUrl)
+
+                Glide.with(holder.imageView.context).load(chatImageUrl.toString())
+                    .error(R.drawable.user)     // 이미지 로드 실패시 기본이미지 셋팅
+                    .into(holder.imageView)
             }
 
+            holder.textView_lastMessage.text = lastMessage
+            holder.textView_title.text = chatName
 
-            if(lastMessage != null){
-                holder.textView_lastMessage.text = lastMessage
-            }
-            else{
-                holder.textView_lastMessage.text = ""
-            }
 
-            if(chatName != null){
-                holder.textView_title.text = chatName
-            }
-
+            // 안읽은 메시지가 0보다 크면 안읽은 메시지수를 보여줌
             if(msgCnt!! > 0) {
                 Log.d("test", "msgCnt => "+ msgCnt)
                 holder.textView_chatCount.visibility = View.VISIBLE
@@ -306,6 +318,8 @@ class ChatFragment : Fragment() {
 
             //채팅창 선택시 이동
             holder.itemView.setOnClickListener {
+                println("setOnClickListener!!!")
+
                 Log.d("test", "chatId => " + chatId)
 
                 var uid = user?.uid.toString()
@@ -320,6 +334,37 @@ class ChatFragment : Fragment() {
                 intent.putExtra("chatId", chatId)
                 context?.startActivity(intent)
             }
+
+
+            holder.itemView.setOnLongClickListener {
+                println("setOnLongClickListener!!!")
+
+
+
+                val builder = AlertDialog.Builder(holder.itemView.context)
+                builder.setTitle("채팅장 퇴장")
+                    .setMessage("해당 채팅방을 퇴장하시겠습니까?")
+                    .setPositiveButton("예",
+                        DialogInterface.OnClickListener { dialog, id ->
+                            var uid = user?.uid.toString()
+
+                            database.child("chatList").child(uid).child(chatId).child("delYn").setValue("Y")
+                            Toast.makeText(this@ChatFragment.context, "퇴장 성공", Toast.LENGTH_LONG).show()
+
+                        })
+                    .setNegativeButton("아니요",
+                        DialogInterface.OnClickListener { dialog, id ->
+
+                        })
+
+
+
+                builder.create()
+                builder.show()
+
+                return@setOnLongClickListener(true)
+            }
+
 
         }
 

@@ -6,23 +6,23 @@
     android:layout_height="match_parent"
     tools:context=".FirstFragment">
 
-
-
-    <Button
+    <!--<Button
         android:id="@+id/button_first"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="84dp"
         android:text="@string/next"
-        tools:ignore="MissingConstraints" />
+        tools:ignore="MissingConstraints" />-->
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
 
         <EditText
             android:id="@+id/idTv"
@@ -35,26 +35,33 @@
             android:hint="Id"
             android:inputType="textPersonName"
             android:textColor="#505050"
-            app:layout_constraintBottom_toTopOf="@+id/nameTv"
+            android:visibility="invisible"
+            tools:ignore="MissingConstraints" />
+            <!--app:layout_constraintBottom_toTopOf="@+id/nameTv"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"-->
+        <!--app:layout_constraintBottom_toTopOf="@+id/commentTv"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/idTv"-->
+
 
         <EditText
             android:id="@+id/nameTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="100dp"
-            android:layout_marginTop="13dp"
-            android:layout_marginEnd="101dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginBottom="16dp"
             android:ems="10"
-            android:hint="Name"
+            android:hint="Email"
             android:inputType="textPersonName"
-            app:layout_constraintBottom_toTopOf="@+id/commentTv"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/addBtn"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/idTv" />
-
+            app:layout_constraintTop_toBottomOf="@+id/idTv"
+            app:layout_constraintVertical_bias="0.32" />
 
         <EditText
             android:id="@+id/commentTv"
@@ -66,47 +73,58 @@
             android:ems="10"
             android:hint="Comment"
             android:inputType="textPersonName"
+            android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@+id/addBtn"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/nameTv" />
+            app:layout_constraintTop_toBottomOf="@+id/nameTv"
+            app:layout_constraintVertical_bias="0.0" />
 
         <Button
             android:id="@+id/addBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="162dp"
-            android:layout_marginEnd="155dp"
             android:layout_marginTop="30dp"
+            android:layout_marginEnd="155dp"
             android:text="추가"
-            app:layout_constraintBottom_toTopOf="@+id/friendSerchBtn"
+            android:visibility="invisible"
+            tools:ignore="MissingConstraints" />
+            <!--app:layout_constraintBottom_toTopOf="@+id/friendSerchBtn"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.495"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/commentTv" />
+            app:layout_constraintTop_toBottomOf="@+id/commentTv"-->
+
+        <!--app:layout_constraintBottom_toBottomOf="@+id/deleteBtn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/addBtn"-->
 
         <Button
             android:id="@+id/friendSerchBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="162dp"
-            android:layout_marginEnd="155dp"
-            android:layout_marginTop="13dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="46dp"
+            android:layout_marginBottom="61dp"
             android:text="검색"
-            app:layout_constraintBottom_toBottomOf="@+id/deleteBtn"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.501"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/addBtn" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="MissingConstraints" />
 
         <Button
             android:id="@+id/deleteBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="162dp"
-            android:layout_marginEnd="155dp"
             android:layout_marginTop="13dp"
+            android:layout_marginEnd="155dp"
             android:text="삭제"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.501"

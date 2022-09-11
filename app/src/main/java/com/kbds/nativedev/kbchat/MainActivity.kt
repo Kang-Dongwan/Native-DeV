@@ -39,10 +39,20 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        bottom_nav.setOnNavigationItemSelectedListener(bottomNavItemSelectedListener)
-        friendFragment = FriendFragment.newInstance()
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_frame, friendFragment).commit()
-        nextIntent = Intent(this, LoginActivity::class.java)
+        val friendUid = intent.getStringExtra("friendUid")
+        if(friendUid != null) {
+            bottom_nav.setOnNavigationItemSelectedListener(bottomNavItemSelectedListener)
+            chatFragmet = ChatFragment.newInstance()
+            supportFragmentManager.beginTransaction().replace(R.id.fragment_frame, chatFragmet).commit()
+            nextIntent = Intent(this, LoginActivity::class.java)
+            nextIntent.putExtra("friendUid", friendUid)
+        } else {
+            bottom_nav.setOnNavigationItemSelectedListener(bottomNavItemSelectedListener)
+            friendFragment = FriendFragment.newInstance()
+            supportFragmentManager.beginTransaction().replace(R.id.fragment_frame, friendFragment)
+                .commit()
+            nextIntent = Intent(this, LoginActivity::class.java)
+        }
     }
 
     private lateinit var callback: OnChangeSettingFragment
@@ -101,11 +111,9 @@ class MainActivity : AppCompatActivity() {
         }
         true
     }
-
     interface OnChangeSettingFragment {
         fun onModifyUser()
         fun onLogOut()
     }
-
 
 }
