@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId "com.kbds.nativedev.kbchat"
-        minSdk 21
+        minSdk 23
         targetSdk 32
         versionCode 1
         versionName "1.0"
@@ -42,9 +42,10 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.4.2'
     implementation 'com.google.android.material:material:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation platform('com.google.firebase:firebase-bom:30.3.2')
+    implementation platform('com.google.firebase:firebase-bom')
     implementation 'com.google.firebase:firebase-analytics-ktx'
 
+    implementation 'com.google.firebase:firebase-database'
     implementation 'com.google.firebase:firebase-database-ktx'
     implementation 'com.google.firebase:firebase-storage-ktx'
     implementation 'androidx.activity:activity-ktx:1.2.0-alpha05'

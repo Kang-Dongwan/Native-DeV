@@ -2,8 +2,7 @@ package com.kbds.nativedev.kbchat
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.PersistableBundle
-import android.widget.Button
+import android.util.Log
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -47,7 +46,7 @@ class LoginActivity: AppCompatActivity() {
 
     private fun signIn(email: String, password: String) {
         val intentMain = Intent(this, MainActivity::class.java)
-
+        Log.d("tag", "로그인시도")
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) {
                 task -> if (task.isSuccessful) {
@@ -56,6 +55,7 @@ class LoginActivity: AppCompatActivity() {
                     finish()
                     startActivity(intentMain)
                 } else {
+                    Log.w("tag", task.exception.toString())
                     Toast.makeText(this, "아이디 또는 비밀번호가 잘못되었습니다.", Toast.LENGTH_SHORT).show()
                     updateUI(null)
                 }

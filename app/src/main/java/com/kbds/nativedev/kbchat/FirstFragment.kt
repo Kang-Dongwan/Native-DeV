@@ -97,17 +97,19 @@ class FirstFragment : Fragment(), MainActivity.onBackPressedListener, View.OnCli
         setHasOptionsMenu(true)
 
         friendSerchBtn.setOnClickListener {
-            var userId: String = idTv!!.text.toString()
-            var userName: String = nameTv!!.text.toString()
-            var userComment: String = commentTv!!.text.toString();
+            val userId: String = idTv!!.text.toString()
+            val userName: String = nameTv!!.text.toString()
+            val userComment: String = commentTv!!.text.toString();
+
+            Log.d("test", "test000 = ")   //db
 
             FirebaseDatabase.getInstance().reference.child("user").addValueEventListener(object :
                 ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     for (snapshot in dataSnapshot.children) {
-                        var friendUid = snapshot.key
-                        var name = snapshot.child("email")
-                        var comment = snapshot.child("comment")
+                        val friendUid = snapshot.key
+                        val name = snapshot.child("email")
+                        val comment = snapshot.child("comment")
                         Log.d("test", "test000 = "+ name)   //db
                         Log.d("test", "test111 = "+ userName) //input
                         Log.d("test", "test222 = "+ comment) //input

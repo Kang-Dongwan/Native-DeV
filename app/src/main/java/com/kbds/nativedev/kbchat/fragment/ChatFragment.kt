@@ -159,7 +159,8 @@ class ChatFragment : Fragment() {
 
                         for(snapshot in dataSnapshot.children){
 
-                            var msgCnt = snapshot.child("msgCnt").value as Long
+                            //var msgCnt = snapshot.child("msgCnt").value as Long
+                            var msgCnt: Long? = 0
 
                             data1 = snapshot.value as MutableMap<String, String>
 

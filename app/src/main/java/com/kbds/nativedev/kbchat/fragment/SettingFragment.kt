@@ -193,6 +193,7 @@ class SettingFragment : Fragment() {
 
         button?.setOnClickListener{
             if(name?.text!!.isNotEmpty()) {
+                Log.d("tag", name.text.toString())
                 database.child("user/$uid/name").setValue(name.text.toString())
                 name.clearFocus()
                 Toast.makeText(requireContext(), "이름이 변경되었습니다.", Toast.LENGTH_SHORT).show()
