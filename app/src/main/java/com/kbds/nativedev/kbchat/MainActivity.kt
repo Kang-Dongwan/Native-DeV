@@ -1,12 +1,10 @@
 package com.kbds.nativedev.kbchat
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.firebase.auth.FirebaseAuth
 import com.kbds.nativedev.kbchat.databinding.ActivityMainBinding
 import com.kbds.nativedev.kbchat.fragment.ChatFragment
 import com.kbds.nativedev.kbchat.fragment.FriendFragment
@@ -43,6 +41,10 @@ class MainActivity : AppCompatActivity() {
         if(friendUid != null) {
             bottom_nav.setOnNavigationItemSelectedListener(bottomNavItemSelectedListener)
             chatFragmet = ChatFragment.newInstance()
+            val bundle = Bundle()
+            bundle.putString("friendUid", friendUid)
+            chatFragmet.arguments = bundle
+            //ChatFragment 에서 val data = arguments?.getString("friendUid") 로 꺼내서 사용
             supportFragmentManager.beginTransaction().replace(R.id.fragment_frame, chatFragmet).commit()
             nextIntent = Intent(this, LoginActivity::class.java)
             nextIntent.putExtra("friendUid", friendUid)
