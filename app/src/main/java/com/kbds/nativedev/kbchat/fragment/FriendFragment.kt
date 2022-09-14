@@ -107,6 +107,7 @@ class FriendFragment : Fragment() {
         var my_btn = getView()?.findViewById<Button>(R.id.addFriendBtn)
         dataList.clear();
         var list = dataList
+        var listview = getView()?.findViewById<RecyclerView>(R.id.listView)
         //var list: ArrayList<TestData> = requireActivity().intent!!.extras!!.get("dataList") as ArrayList<TestData>
         // Fragment에서 전달받은 list를 넘기면서 ListAdapter 생성
         database = FirebaseDatabase.getInstance().reference
@@ -151,6 +152,7 @@ class FriendFragment : Fragment() {
                                         .addValueEventListener(object :
                                             ValueEventListener {
                                             override fun onDataChange(dataSnapshot: DataSnapshot) {
+
                                                 for (snapshot in dataSnapshot.children) {
                                                     var uid = snapshot.key
                                                     var name = snapshot.child("name").getValue().toString()
@@ -220,10 +222,12 @@ class FriendFragment : Fragment() {
                                                         Log.d("test", "phw dataList.size1 = " + data.keys)
                                                         Log.d("test", "phw dataList.size2 = " + dataList.size)
                                                         listAdapter = ListAdapter(list)
-                                                        listView.layoutManager =
-                                                            LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
+                                                        if (listview != null) {
+                                                            listview.layoutManager =
+                                                                LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
+                                                            listview.adapter = listAdapter
+                                                        }
                                                         // RecyclerView.adapter에 지정
-                                                        listView.adapter = listAdapter
 
                                                         listAdapter.setOnItemClickListener(object : ListAdapter.OnItemClickListener{
                                                             override fun onItemClick(v: View, data: TestData, pos : Int) {
