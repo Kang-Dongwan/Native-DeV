@@ -1,6 +1,6 @@
 package com.kbds.nativedev.kbchat.adapters
 
-import android.view.Gravity
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,14 +9,21 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.FirebaseDatabase
+import com.bumptech.glide.Glide
 import com.google.firebase.ktx.Firebase
 import com.kbds.nativedev.kbchat.R
+import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 data class Message(var uid:String = "", var message:String = "", var time:String = "")
 
 class MessageAdapter(private val message: List<Message>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     //    class MessageViewHolder(val binding: ItemMessageLeftBinding): RecyclerView.ViewHolder(binding.root)
+    private val fireDatabase = FirebaseDatabase.getInstance().reference
+    private val dateFormatter = SimpleDateFormat ("yyyyMMddHHmmssSS")
 
     class RightMessageViewHolder(view: View) : RecyclerView.ViewHolder(view){
         var tvMessage: TextView = view.findViewById(R.id.messageItem_textView_message)
@@ -80,20 +87,40 @@ class MessageAdapter(private val message: List<Message>): RecyclerView.Adapter<R
 //        holder.binding.messageItemTextviewName.text = message[position].uid
         when (holder) {
             is RightMessageViewHolder -> {
+                var time: String = ""
+                time = SimpleDateFormat("yyyy.MM.dd HH:mm:ss").format(dateFormatter.parse(message[position].time))
                 holder.tvMessage.textSize = 20F
                 holder.tvMessage.text = message[position].message
-                holder.tvTime.text = message[position].time
+                holder.tvTime.text = time
 
             }
             is LeftMessageViewHolder -> {
-                holder.tvMessage.textSize = 20F
-                holder.tvMessage.text = message[position].message
-                holder.tvTime.text = message[position].time
-                holder.tvName.text = message[position].uid
+                fireDatabase.child("user").child(message[position].uid).get().addOnSuccessListener {
+                    var name: String? = ""
+                    var imgUrl: String? = ""
+                    var time: String = ""
+                    time = SimpleDateFormat("yyyy.MM.dd HH:mm:ss").format(dateFormatter.parse(message[position].time))
+
+                    name = it.child("name").getValue().toString()
+                    imgUrl = it.child("profileImageUrl").getValue().toString()
+
+                    holder.tvMessage.textSize = 20F
+                    holder.tvMessage.text = message[position].message
+                    holder.tvTime.text = time
+                    holder.tvName.text = name
+                    Glide.with(holder.itemView.context)
+                        .load(imgUrl)
+                        .error(R.drawable.user) // 이미지로드 실패시 로컬 user.png
+                        .circleCrop()
+                        .into(holder.ivProfile)
+                }
+
             }
             is NoticeViewHolder -> {
+                var time: String = ""
+                time = SimpleDateFormat("yyyy.MM.dd HH:mm:ss").format(dateFormatter.parse(message[position].time))
                 holder.tvMessage.textSize = 20F
-                holder.tvTime.text = message[position].time
+                holder.tvTime.text = time
             }
             else -> {
             }
