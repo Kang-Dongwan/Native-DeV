@@ -12,19 +12,29 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:textSize="40sp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="25dp"
         android:text="회원가입" />
 
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/et_imageview"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_below="@+id/tv_title"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/user"
+        tools:ignore="MissingConstraints"
+        android:scaleType="centerCrop"/>
 
     <EditText
         android:id="@+id/email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tv_title"
-        android:hint="ID (E-mail)"
+        android:layout_below="@id/et_imageview"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="30dp"
         android:ems="10"
+        android:hint="ID (E-mail)"
         android:inputType="textEmailAddress"
         android:text="" />
 
@@ -36,7 +46,7 @@
         android:layout_below="@+id/email"
         android:hint="PASSWORD (6자리 이상)"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:ems="10"
         android:inputType="textPassword" />
 
@@ -47,17 +57,28 @@
         android:layout_below="@+id/et_pwd"
         android:hint="PASSWORD 재입력"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:ems="10"
         android:inputType="textPassword" />
+
+    <EditText
+        android:id="@+id/et_textview_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/et_re_pwd"
+        android:hint="Name"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:ems="10"
+        android:inputType="textPersonName"/>
 
     <Button
         android:id="@+id/btn_regi"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/et_re_pwd"
+        android:layout_below="@id/et_textview_name"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:text="회원가입" />
 
 
