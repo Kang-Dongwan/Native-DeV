@@ -139,13 +139,13 @@ class ChatFragment : Fragment() {
         init {
             // 사용자의 uid
             uid = Firebase.auth.currentUser?.uid.toString()
-            println("사용자 uid :" + uid)
+            println("사용자 uid :$uid")
 
             setupChatList()
         }
 
         // 전체채팅방 목록 초기화 및 업데이트 처리
-        fun setupChatList(){
+        private fun setupChatList(){
             if(user != null){
 
                 // 사용자가 들어가있는 채팅방들

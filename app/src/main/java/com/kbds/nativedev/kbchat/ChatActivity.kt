@@ -2,10 +2,13 @@ package com.kbds.nativedev.kbchat
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -18,14 +21,17 @@ import com.kbds.nativedev.kbchat.databinding.ActivityChatBinding
 import java.text.SimpleDateFormat
 import java.util.*
 
+data class ChatList(var charImageUrl:String = "", var chatName:String = "", var delYn:String = "N", var lastMessage:String = "", var msgCnt:String = "0", var visitYn:String = "Y")
+
 class ChatActivity: AppCompatActivity() {
 
     private lateinit var binding: ActivityChatBinding
-    private var message = arrayListOf<Message>()
+    private var messageList = arrayListOf<Message>()
     private val fireDatabase = FirebaseDatabase.getInstance().reference
-    private var chatRoomUid : String? = null
-    private var destinationUid : String? = null
+    private var chatId : String? = null
+    private var friendUid : String? = null
     private var uid : String? = null
+    private val dateFormatter = SimpleDateFormat ("yyyyMMddHHmmssSS")
 
     @SuppressLint("SimpleDateFormat")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,49 +39,50 @@ class ChatActivity: AppCompatActivity() {
         binding = ActivityChatBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        //메세지를 보낸 시간
-        val time = System.currentTimeMillis()
-        val dateFormat = SimpleDateFormat("MM월dd일 hh:mm")
-        val curTime = dateFormat.format(Date(time)).toString()
-
-        destinationUid = intent.getStringExtra("destinationUid")
+        friendUid = intent.getStringExtra("friendUid")
+        chatId = intent.getStringExtra("chatId")
         uid = Firebase.auth.currentUser?.uid.toString()
         Log.d("test", "채팅 진입")
 
         binding.chatActivityButton.setOnClickListener {
-            Log.d("클릭 시 dest", "$destinationUid")
-            /*
-            val chatModel = ChatModel()
-            chatModel.users.put(uid.toString(), true)
-            chatModel.users.put(destinationUid!!, true)
-            val comment = Comment(uid, editText.text.toString(), curTime)
-            */
-            /*
-            if(chatRoomUid == null){
-                imageView.isEnabled = false
-                fireDatabase.child("chatrooms").push().setValue(chatModel).addOnSuccessListener {
-                    //채팅방 생성
-                    checkChatRoom()
-                    //메세지 보내기
-                    Handler().postDelayed({
-                        println(chatRoomUid)
-                        fireDatabase.child("chatrooms").child(chatRoomUid.toString()).child("comments").push().setValue(comment)
-                        messageActivity_editText.text = null
-                    }, 1000L)
-                    Log.d("chatUidNull dest", "$destinationUid")
-                }
-            }else{
-                fireDatabase.child("chatrooms").child(chatRoomUid.toString()).child("comments").push().setValue(comment)
-                messageActivity_editText.text = null
-                Log.d("chatUidNotNull dest", "$destinationUid")
-            }
+            val msgMap : HashMap<String, Message> = HashMap()
+            val message = Message()
+            message.uid = uid.toString()
+            message.message = binding.chatActivityEditText.text.toString()
+            dateFormatter.timeZone = TimeZone.getTimeZone("Asia/Seoul")
+            message.time = dateFormatter.format(Date().time)
+            msgMap.put("msg", message)
 
-             */
+            if(chatId == null) {
+                Log.d("test", "채팅룸 없음")
+                val chatList = ChatList()
+                fireDatabase.child("user").child("$friendUid").get().addOnSuccessListener {
+                    var name: String? = ""
+                    var imgUrl: String? = ""
+                    name = it.child("name").getValue().toString()
+                    imgUrl = it.child("profileImageUrl").getValue().toString()
+
+                    chatList.chatName = name
+                    chatList.charImageUrl = imgUrl
+
+                    fireDatabase.child("chatList").child("$uid").push().setValue(chatList)
+
+                    messageList()
+
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        fireDatabase.child("chat").child("$chatId").push().setValue(message)
+                    }, 1000L)
+                }
+            } else {
+                Log.d("test", "채팅룸 존재")
+                fireDatabase.child("chat").child("$chatId").push().setValue(message)
+            }
+            binding.chatActivityEditText.text = null
         }
-        checkChatRoom()
+        messageList()
     }
 
-    private fun checkChatRoom(){
+    private fun messageList(){
         Log.d("test", "채팅 진입")
         fireDatabase.child("chat").child("s3T6nlgYa0QJsIqyDwj2AukmhUi212341234").orderByChild("time")
             .addValueEventListener(object : ValueEventListener {
@@ -83,6 +90,7 @@ class ChatActivity: AppCompatActivity() {
                 }
                 override fun onDataChange(snapshot: DataSnapshot) {
                     Log.d("test", "DB 조회")
+                    messageList.clear()
                     for (item in snapshot.children){
                         var cuid = item.child("uid").getValue().toString()
                         var message1 = item.child("message").getValue().toString()
@@ -92,16 +100,11 @@ class ChatActivity: AppCompatActivity() {
                         Log.d("test", "time = $time")
                         val data = item.getValue(Message::class.java)
                         if (data != null) {
-                            message.add(data)
+                            messageList.add(data)
                         }
                         binding.messageActivityRecyclerview.layoutManager = LinearLayoutManager(this@ChatActivity)
-                        binding.messageActivityRecyclerview.adapter = MessageAdapter(message)
-                        /*
-                        val chatModel = item.getValue<ChatModel>()
-                        if(chatModel?.users!!.containsKey(destinationUid)){
-
-                        }
-                        */
+                        binding.messageActivityRecyclerview.adapter = MessageAdapter(messageList)
+                        binding.messageActivityRecyclerview.scrollToPosition(messageList.size - 1)
                     }
                 }
             })

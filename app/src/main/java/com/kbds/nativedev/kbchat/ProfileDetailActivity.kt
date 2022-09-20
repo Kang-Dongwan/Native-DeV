@@ -134,7 +134,7 @@ class ProfileDetailActivity : AppCompatActivity() {
                 mFragment.arguments = mBundle
                 mFragmentTransaction.add(R.id.container, mFragment).commit()*/
             //finish()
-            val nextIntent = Intent(this, MainActivity::class.java)
+            val nextIntent = Intent(this, ChatActivity::class.java)
             nextIntent.putExtra("friendUid", passFriendUid)
             startActivity(nextIntent)
 
