@@ -24,6 +24,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.kbds.nativedev.kbchat.R
 import kotlinx.android.synthetic.main.activity_profile_detail.*
 import kotlinx.android.synthetic.main.fragment_setting.*
+import kotlin.collections.HashMap
 
 data class UserInfo(
     val uid : String? = null,
@@ -150,33 +151,61 @@ class SettingFragment : Fragment() {
         }
 
         button?.setOnClickListener{
+            if(imageUri != null) {
+                registerUserImage(
+                    tvEmail.text.toString(),
+                    name.text.toString(),
+                    comment.text.toString()
+                )
+            }else{
+                registerUser(
+                    tvEmail.text.toString(),
+                    name.text.toString(),
+                    comment.text.toString()
+                )
+            }
 
-                  if(name?.text!!.isNotEmpty()) {
-                      Log.d("tag", name.text.toString())
-                      database.child("user/$uid/name").setValue(name.text.toString())
-                      name.clearFocus()
-                      Toast.makeText(requireContext(), "이름이 변경되었습니다.", Toast.LENGTH_SHORT).show()
-                  }
-                  if(comment?.text!!.isNotEmpty()) {
-                      database.child("user/$uid/comment").setValue(comment.text.toString())
-                      comment.clearFocus()
-                      Toast.makeText(requireContext(), "상태메시지가 변경되었습니다.", Toast.LENGTH_SHORT).show()
-                  }
-                  if(imageUri != null){
-                      fireStorage.child("userImages/${Companion.uid}/photo").putFile(imageUri!!)
-                          .addOnSuccessListener {
-                              fireStorage.child("userImages/${Companion.uid}/photo").downloadUrl.addOnSuccessListener {
-                                  val photoUri: Uri = it
-                                  println("$photoUri")
-                                  fireDatabase.child("user/${Companion.uid}/profileImageUrl")
-                                      .setValue(photoUri.toString())
-                                  Toast.makeText(requireContext(), "프로필사진이 변경되었습니다.", Toast.LENGTH_SHORT).show()
-                              }
-                          }
-                  }
         }
 
         return view
     }
+    private fun registerUser(email:String, name:String, comment: String) {
+        val database = Firebase.database.reference
+
+        val taskMap = HashMap<String, Any>()
+
+        taskMap.put("user/$uid/name", name)
+        taskMap.put("user/$uid/comment", comment)
+
+        database.updateChildren(taskMap);
+
+        Toast.makeText(requireContext(), "회원정보가 변경되었습니다.", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun registerUserImage(email:String, name:String, comment: String) {
+        val database = Firebase.database.reference
+        val user = Firebase.auth.currentUser
+        val userId = user?.uid
+        val userIdSt = userId.toString()
+
+        fireStorage.child("userImages/${Companion.uid}/photo").putFile(imageUri!!)
+            .addOnSuccessListener {
+                fireStorage.child("userImages/${Companion.uid}/photo").downloadUrl.addOnSuccessListener {
+                    val photoUri: Uri = it
+                    println("$photoUri")
+
+                    val taskMap = HashMap<String, Any>()
+
+                    taskMap.put("user/$uid/name", name)
+                    taskMap.put("user/$uid/comment", comment)
+                    taskMap.put("user/$uid/profileImageUrl", photoUri.toString())
+
+                    database.updateChildren(taskMap);
+
+                    Toast.makeText(requireContext(), "회원정보가 변경되었습니다.", Toast.LENGTH_SHORT).show()
+                }
+            }
+    }
+
 
 }
