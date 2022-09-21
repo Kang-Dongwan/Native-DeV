@@ -68,6 +68,7 @@ class ChatActivity: AppCompatActivity() {
                     //fireDatabase.child("chatList").child("$uid").push().setValue(chatList)
                     chatId = fireDatabase.child("chatList").child("$uid").push().getKey()
                     fireDatabase.child("chatList").child("$uid").child("$chatId").setValue(chatList)
+                    fireDatabase.child("chatList").child("$friendUid").child("$chatId").setValue(chatList)
 
                     messageList()
 
