@@ -65,7 +65,9 @@ class ChatActivity: AppCompatActivity() {
                     chatList.chatName = name
                     chatList.charImageUrl = imgUrl
 
-                    fireDatabase.child("chatList").child("$uid").push().setValue(chatList)
+                    //fireDatabase.child("chatList").child("$uid").push().setValue(chatList)
+                    chatId = fireDatabase.child("chatList").child("$uid").push().getKey()
+                    fireDatabase.child("chatList").child("$uid").child("$chatId").setValue(chatList)
 
                     messageList()
 
@@ -84,7 +86,7 @@ class ChatActivity: AppCompatActivity() {
 
     private fun messageList(){
         Log.d("test", "채팅 진입")
-        fireDatabase.child("chat").child("s3T6nlgYa0QJsIqyDwj2AukmhUi212341234").orderByChild("time")
+        fireDatabase.child("chat").child("$chatId").orderByChild("time")
             .addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(error: DatabaseError) {
                 }
