@@ -33,7 +33,6 @@ import kotlin.collections.ArrayList
 // 파이어베이스 접근하기 위한 객체 생성
 //private lateinit var database: DatabaseReference
 private val database = FirebaseDatabase.getInstance().reference
-private val user = Firebase.auth.currentUser
 
 
 // chatList 데이터 모델
@@ -87,7 +86,7 @@ class ChatFragment : Fragment() {
 
     //private lateinit var data: MutableMap<String, String>
     private lateinit var data1: MutableMap<String, String>
-
+    private val user = Firebase.auth.currentUser
 
     companion object {
         fun newInstance() : ChatFragment {

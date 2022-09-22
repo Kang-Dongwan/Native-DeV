@@ -21,7 +21,7 @@ import com.kbds.nativedev.kbchat.databinding.ActivityChatBinding
 import java.text.SimpleDateFormat
 import java.util.*
 
-data class ChatList(var charImageUrl:String = "", var chatName:String = "", var delYn:String = "N", var lastMessage:String = "", var msgCnt:String = "0", var visitYn:String = "Y")
+data class ChatList(var chatImageUrl:String = "", var chatName:String = "", var delYn:String = "N", var lastMessage:String = "", var msgCnt:String = "0", var visitYn:String = "Y")
 
 class ChatActivity: AppCompatActivity() {
 
@@ -44,6 +44,23 @@ class ChatActivity: AppCompatActivity() {
         uid = Firebase.auth.currentUser?.uid.toString()
         Log.d("test", "채팅 진입")
 
+        if(chatId == null) {
+            fireDatabase.child("chatList").child("$uid").get().addOnSuccessListener {
+                var tempKey: String? = ""
+                it.children.forEach() {
+                    tempKey = it.key.toString()
+                }
+                Log.d("test", "tempKey : $tempKey")
+                if("" != tempKey) {
+                    fireDatabase.child("chatList").child("$friendUid").child("$tempKey").get()
+                        .addOnSuccessListener {
+                            chatId = it.key.toString()
+                            messageList()
+                        }
+                }
+            }
+        }
+
         binding.chatActivityButton.setOnClickListener {
             val msgMap : HashMap<String, Message> = HashMap()
             val message = Message()
@@ -63,7 +80,7 @@ class ChatActivity: AppCompatActivity() {
                     imgUrl = it.child("profileImageUrl").getValue().toString()
 
                     chatList.chatName = name
-                    chatList.charImageUrl = imgUrl
+                    chatList.chatImageUrl = imgUrl
 
                     //fireDatabase.child("chatList").child("$uid").push().setValue(chatList)
                     chatId = fireDatabase.child("chatList").child("$uid").push().getKey()
@@ -74,11 +91,15 @@ class ChatActivity: AppCompatActivity() {
 
                     Handler(Looper.getMainLooper()).postDelayed({
                         fireDatabase.child("chat").child("$chatId").push().setValue(message)
+                        fireDatabase.child("chatList").child("$uid").child("$chatId").child("lastMessage").setValue(message.message.toString())
+                        fireDatabase.child("chatList").child("$friendUid").child("$chatId").child("lastMessage").setValue(message.message.toString())
                     }, 1000L)
                 }
             } else {
                 Log.d("test", "채팅룸 존재")
                 fireDatabase.child("chat").child("$chatId").push().setValue(message)
+                fireDatabase.child("chatList").child("$uid").child("$chatId").child("lastMessage").setValue(message.message.toString())
+                fireDatabase.child("chatList").child("$friendUid").child("$chatId").child("lastMessage").setValue(message.message.toString())
             }
             binding.chatActivityEditText.text = null
         }
