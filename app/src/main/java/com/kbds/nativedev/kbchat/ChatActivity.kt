@@ -38,6 +38,8 @@ class ChatActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityChatBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        //setContentView(R.layout.activity_chat)
+
 
         friendUid = intent.getStringExtra("friendUid")
         chatId = intent.getStringExtra("chatId")
