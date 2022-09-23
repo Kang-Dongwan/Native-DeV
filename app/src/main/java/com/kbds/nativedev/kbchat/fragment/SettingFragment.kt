@@ -2,8 +2,14 @@ package com.kbds.nativedev.kbchat.fragment
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
+import android.graphics.Matrix
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -21,10 +27,13 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.UploadTask
 import com.kbds.nativedev.kbchat.R
 import kotlinx.android.synthetic.main.activity_profile_detail.*
 import kotlinx.android.synthetic.main.fragment_setting.*
-import kotlin.collections.HashMap
+import java.io.ByteArrayOutputStream
+import java.io.IOException
+
 
 data class UserInfo(
     val uid : String? = null,
@@ -68,7 +77,11 @@ class SettingFragment : Fragment() {
             if(result.resultCode == AppCompatActivity.RESULT_OK) {
                 imageUri = result.data?.data //이미지 경로 원본
 
-                profile_imageview.setImageURI(imageUri) //이미지 뷰를 바꿈
+                Glide.with(this /* context */)
+                    .load(imageUri)
+                    .fallback(R.drawable.user)
+                    .circleCrop()
+                    .into(profile_imageview!!)
 
                 Log.d("이미지", "성공")
             }
@@ -104,31 +117,27 @@ class SettingFragment : Fragment() {
             if (it.value != null){
                 val map = it.value as HashMap<String, Any>
 
-                name.text = map.get("name")?.toString()
-                comment.text = map.get("comment")?.toString()
+                name.text = map["name"]?.toString()
+                comment.text = map["comment"]?.toString()
 
-                var imageUrl = map.get("profileImageUrl")?.toString()
-                //Log.i("imageUrl", "Got value ${imageUrl}")
+                var imageUrl = map["profileImageUrl"]?.toString()
 
-
-                if(imageUrl != null){
-                    Glide.with(this /* context */)
-                        .load(imageUrl)
-                        .into(photo!!)
-
-                }else{
-                    Glide.with(this).load(R.drawable.user)
-                        .error(R.drawable.user) // 이미지로드 실패시 로컬 user.png
-                        .circleCrop()
-                        .into(photo!!)
+                val bitmapRef = fireStorage.child("userImages/${uid}/photo")
+                bitmapRef.downloadUrl.addOnCompleteListener { it ->
+                    if(it.isSuccessful){
+                        Glide.with(this /* context */)
+                            .load(if(imageUrl != null) it.result else R.drawable.user)
+                            .fallback(R.drawable.user)
+                            .placeholder(R.drawable.user)
+                            .circleCrop()
+                            .into(profile_imageview!!)
+                    } else {
+                        Glide.with(this /* context */)
+                            .load(R.drawable.user)
+                            .circleCrop()
+                            .into(profile_imageview!!)
+                    }
                 }
-
-/*
-                Glide.with(this).load(imageUrl)
-                    .error(R.drawable.user) // 이미지로드 실패시 로컬 user.png
-                    .circleCrop()
-                    .into(photo!!)
-*/
             }
         }.addOnFailureListener{
             Log.e("firebase", "Error getting data", it)
@@ -174,8 +183,8 @@ class SettingFragment : Fragment() {
 
         val taskMap = HashMap<String, Any>()
 
-        taskMap.put("user/$uid/name", name)
-        taskMap.put("user/$uid/comment", comment)
+        taskMap["user/$uid/name"] = name
+        taskMap["user/$uid/comment"] = comment
 
         database.updateChildren(taskMap);
 
@@ -188,24 +197,84 @@ class SettingFragment : Fragment() {
         val userId = user?.uid
         val userIdSt = userId.toString()
 
-        fireStorage.child("userImages/${Companion.uid}/photo").putFile(imageUri!!)
-            .addOnSuccessListener {
-                fireStorage.child("userImages/${Companion.uid}/photo").downloadUrl.addOnSuccessListener {
-                    val photoUri: Uri = it
-                    println("$photoUri")
+        val bitmap = compressBitmap(imageUri!!)
+        val baos = ByteArrayOutputStream()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            bitmap!!.compress(Bitmap.CompressFormat.WEBP_LOSSLESS, 100, baos)
+        } else {
+            bitmap!!.compress(Bitmap.CompressFormat.PNG, 100, baos)
+        }
+        val data = baos.toByteArray()
+
+        val bitmapRef = fireStorage.child("userImages/${uid}/photo")
+        val uploadTask: UploadTask = bitmapRef.putBytes(data)
+        uploadTask.addOnFailureListener {
+            Log.d("uploadTask", "Faliure")
+        }.addOnSuccessListener {
+            Log.d("uploadTask", "Success = " + bitmapRef.path)
+
+            //다시 진입시 빠르게 이미지 로딩을 하기 위해 이미지뷰에 한번 그려준다.
+            bitmapRef.downloadUrl.addOnCompleteListener { it ->
+                if(it.isSuccessful){
+                    Glide.with(this /* context */)
+                        .load(it.result)
+                        .fallback(R.drawable.user)
+                        .circleCrop()
+                        .into(profile_imageview!!)
 
                     val taskMap = HashMap<String, Any>()
 
-                    taskMap.put("user/$uid/name", name)
-                    taskMap.put("user/$uid/comment", comment)
-                    taskMap.put("user/$uid/profileImageUrl", photoUri.toString())
+                    taskMap["user/$uid/name"] = name
+                    taskMap["user/$uid/comment"] = comment
+                    taskMap["user/$uid/profileImageUrl"] = it.result
 
                     database.updateChildren(taskMap);
-
-                    Toast.makeText(requireContext(), "회원정보가 변경되었습니다.", Toast.LENGTH_SHORT).show()
+                } else {
+                    Glide.with(this /* context */)
+                        .load(R.drawable.user)
+                        .circleCrop()
+                        .into(profile_imageview!!)
                 }
             }
+
+            Toast.makeText(requireContext(), "회원정보가 변경되었습니다.", Toast.LENGTH_SHORT).show()
+        }
     }
 
 
+    private fun compressBitmap(imageUri : Uri): Bitmap? {
+        try {
+            var bitmap = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                ImageDecoder.decodeBitmap(ImageDecoder.createSource(requireActivity().contentResolver, imageUri!!))
+            } else {
+                MediaStore.Images.Media.getBitmap(requireActivity().contentResolver, imageUri)
+            }
+
+            val stream = ByteArrayOutputStream()
+            bitmap!!.compress(Bitmap.CompressFormat.JPEG, 20, stream)
+            val byteArray: ByteArray = stream.toByteArray()
+            return getResizedBitmap(BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size), 500, 500)
+        } catch (e: IOException){
+
+        }
+        return null
+    }
+
+    private fun getResizedBitmap(bm: Bitmap, newWidth: Int, newHeight: Int): Bitmap? {
+        val width = bm.width
+        val height = bm.height
+        val scaleWidth = newWidth.toFloat() / width
+        val scaleHeight = newHeight.toFloat() / height
+        // CREATE A MATRIX FOR THE MANIPULATION
+        val matrix = Matrix()
+        // RESIZE THE BIT MAP
+        matrix.postScale(scaleWidth, scaleHeight)
+
+        // "RECREATE" THE NEW BITMAP
+        val resizedBitmap = Bitmap.createBitmap(
+            bm, 0, 0, width, height, matrix, false
+        )
+        bm.recycle()
+        return resizedBitmap
+    }
 }

@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="#FFFFFF">
 
-    <de.hdodenhof.circleimageview.CircleImageView
+    <ImageView
         android:id="@+id/profile_imageview"
         android:layout_width="150dp"
         android:layout_height="150dp"
