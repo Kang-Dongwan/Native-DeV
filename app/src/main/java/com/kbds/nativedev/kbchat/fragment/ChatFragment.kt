@@ -1,5 +1,6 @@
 package com.kbds.nativedev.kbchat.fragment
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -15,6 +16,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import com.kbds.nativedev.kbchat.R
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.*
@@ -27,24 +29,26 @@ import com.kbds.nativedev.kbchat.model.ChatRoom
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.kbds.nativedev.kbchat.ChatActivity
+import java.time.LocalDateTime
 import java.util.*
 import kotlin.collections.ArrayList
+import java.time.format.DateTimeFormatter
 
 // 파이어베이스 접근하기 위한 객체 생성
 //private lateinit var database: DatabaseReference
 private val database = FirebaseDatabase.getInstance().reference
-private val user = Firebase.auth.currentUser
 
 
 // chatList 데이터 모델
 data class ChatListModel(
     private var uid: String? = null        // 사용자의 uid
     , private var chatId: String? = null     // 사용자가 속한 채팅방id
-    , private var chatName: String? = null    // 채팅방의 이름
-    , private var lastMessage: String? = null    // 마지막메시지
-    , private var chatImageUrl: String? = null    // 채팅방 이미지
-    , private var delYn: String? = null         // 채팅방 나감 여부
-    , private var msgCnt: Long? = 0           // 안읽은 메시지 수
+    , private var chatName: String? = null      // 채팅방의 이름
+    , private var lastMessage: String? = null   // 마지막메시지
+    , private var chatImageUrl: String? = null  // 채팅방 이미지
+    , private var delYn: String? = null         // 채팅방 나감 여부 (Y/N)
+    , private var msgCnt: Long? = 0             // 안읽은 메시지 수
+    , private var visitYn: String? = null       // 사용자가 해당 채팅방 방문여부 (Y/N)
 ){
     fun getUid(): String? {
         return uid
@@ -79,9 +83,10 @@ data class ChatListModel(
     fun getMsgCnt(): Long? {
         return msgCnt
     }
-
-
 }
+
+data class Message(var chatId:String = "", var message:String = "", var time:String = "" )
+
 
 class ChatFragment : Fragment() {
 
@@ -118,13 +123,17 @@ class ChatFragment : Fragment() {
         // inflater : xml로 정의된 view를 실제 객체화 시키는 용도
         val view = inflater.inflate(R.layout.fragment_chat, container, false)
 
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         val recyclerView = view.findViewById<RecyclerView>(R.id.chatFragment_recyclerview)
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = RecyclerViewAdapter()
 
-
-        return view
     }
 
 
@@ -134,9 +143,10 @@ class ChatFragment : Fragment() {
 
         // Firebase 데이터베이스에서 데이터를 수신하고 ArrayList를 채운다, 그리고 ArrayList가 recyclerview 어댑터의 데이터소르로 사용됩니다
         // 채팅방 리스트
-        //private val chatList = ArrayList<ChatListModel>()
         private var chatList: ArrayList<ChatListModel> = arrayListOf()
-        private var uid : String? = null        // ?는 uid가 null일수도 있음을 표시
+        private var message: ArrayList<Message> = arrayListOf()
+        //private var uid : String? = null        // ?는 uid가 null일수도 있음을 표시
+
         private val destinationUsers : ArrayList<String> = arrayListOf()
 
         init {
@@ -145,6 +155,9 @@ class ChatFragment : Fragment() {
             println("사용자 uid :$uid")
 
             setupChatList()
+
+
+
         }
 
         // 전체채팅방 목록 초기화 및 업데이트 처리
@@ -154,7 +167,7 @@ class ChatFragment : Fragment() {
                 // 사용자가 들어가있는 채팅방들
                 // addListenerForSingleValueEvent -> 한번만 데이터를 가져오고 연결을 닫아버림
                 // addValueEventListener -> db가 변경될때마다 호출
-                database.child("chatList").child(user.uid).addValueEventListener(object : ValueEventListener{
+                database.child("chatList").child("$uid").addValueEventListener(object : ValueEventListener{
                     override fun onCancelled(error: DatabaseError) {}
 
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -178,6 +191,7 @@ class ChatFragment : Fragment() {
                                 var chatName = data1.get("chatName").toString()
                                 var lastMessage = ""
                                 var chatImageUrl = ""
+                                var visitYn = data1.get("visitYn").toString()
 
 
                                 if(data1.get("lastMessage") != null){
@@ -200,60 +214,26 @@ class ChatFragment : Fragment() {
                                         lastMessage,
                                         chatImageUrl,
                                         delYn,
-                                        msgCnt
+                                        msgCnt,
+                                        visitYn
                                     )
                                 )
                                 chatList.addAll(myMutableList1)
                             }
+
+
+
 
                         }
                         notifyDataSetChanged()
                     }
                 })
 
-/*
-                database.child("chatList").child(user.uid).get().addOnSuccessListener {
-                    if(it.exists()){
-                        chatList.clear()
-                        // 사용자가 들어가있는 채팅방들
-                        data = it.value as MutableMap<String, String>
-                        for(key in data.keys){
-                            database.child("chatList").child(user.uid).child(key).addValueEventListener(object : ValueEventListener{
-                                override fun onCancelled(error: DatabaseError) {}
-
-                                override fun onDataChange(snapshot: DataSnapshot) {
-                                    var msgCnt = snapshot.child("msgCnt").value as Long
-                                    data1 = snapshot.value as MutableMap<String, String>
-                                    if("N".equals(data1.get("delYn"))){     // 나가지 않은 채팅방들만 리스트에 뿌려줌
-
-                                        var chatId = snapshot.key
-                                        var chatName = data1.get("chatName")
-                                        var lastMessage = data1.get("lastMessage")
-                                        var chatImageUrl = data1.get("chatImageUrl").toString()
-                                        var delYn = data1.get("delYn")
-
-                                        var myMutableList1: ArrayList<ChatListModel> = arrayListOf(
-                                            ChatListModel(
-                                                uid,
-                                                chatId.toString(),
-                                                chatName.toString(),
-                                                lastMessage.toString(),
-                                                chatImageUrl,
-                                                delYn,
-                                                msgCnt
-                                            )
-                                        )
-                                        chatList.addAll(myMutableList1)
-                                    }
-                                    notifyDataSetChanged()
-                                }
-                            })
-                        }
-                    }
-                }*/
-
             }
         }
+
+
+
 
 
         // onCreateViewHolder는 RecyclerView의 아이템으로 만들어 두었던 list_item.xml을 LayoutInflater하여 뷰의 형태로 변환
@@ -268,6 +248,7 @@ class ChatFragment : Fragment() {
             val textView_title : TextView = itemView.findViewById(R.id.chat_textview_title)
             val textView_lastMessage : TextView = itemView.findViewById(R.id.chat_item_textview_lastmessage)
             val textView_chatCount : TextView = itemView.findViewById(R.id.chat_item_textview_chatCount)
+            val textView_chatDayTime : TextView = itemView.findViewById(R.id.chat_item_textview_chatDayTime)
         }
 
         // recyclerview가 viewholder를 가져와 데이터를 연결할때 호출
@@ -292,7 +273,24 @@ class ChatFragment : Fragment() {
                     .into(holder.imageView)
             }
 
-            holder.textView_lastMessage.text = lastMessage
+            database.child("chat").child(chatId).orderByChild("time").addValueEventListener(object : ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {}
+
+                override fun onDataChange(snapshot: DataSnapshot) {
+
+                    if(snapshot.exists()){
+                        holder.textView_lastMessage.text = snapshot.children.last().child("message").getValue().toString()
+                        //holder.textView_chatDayTime.text = snapshot.children.last().child("time").getValue().toString()
+                        //database.child("chatList").child(uid).child()
+
+                        holder.textView_chatDayTime.text = getLastMessageTimeString(snapshot.children.last().child("time").getValue().toString())
+
+                    }
+                }
+
+            })
+
+            //holder.textView_lastMessage.text = lastMessage
             holder.textView_title.text = chatName
 
 
@@ -309,17 +307,6 @@ class ChatFragment : Fragment() {
 
 
 
-            //채팅방에 있는 유저 모두 체크
-    /*        for (user in chatList[position].getUid().toString()) {
-                if (!user.equals(uid)) {
-                    destinationUid = user.toString()
-                    destinationUsers.add(destinationUid)
-
-                }
-
-            } */
-
-
             //채팅창 선택시 이동
             holder.itemView.setOnClickListener {
                 println("setOnClickListener!!!")
@@ -333,17 +320,14 @@ class ChatFragment : Fragment() {
                 // 해당채팅방 입장시 안읽은메시지 카운트 0으로 셋팅
                 database.child("chatList").child(uid).child(chatId).child("msgCnt").setValue(0)
 
-                val intent = Intent(context, ChatActivity::class.java)
-
+                val intent = Intent(activity, ChatActivity::class.java)
                 intent.putExtra("chatId", chatId)
-                context?.startActivity(intent)
+                startActivity(intent)
             }
 
-
+            // 채팅방 길게 누르면 채팅방 퇴장유무 alertDialog
             holder.itemView.setOnLongClickListener {
                 println("setOnLongClickListener!!!")
-
-
 
                 val builder = AlertDialog.Builder(holder.itemView.context)
                 builder.setTitle("채팅장 퇴장")
@@ -361,16 +345,61 @@ class ChatFragment : Fragment() {
 
                         })
 
-
-
                 builder.create()
                 builder.show()
 
                 return@setOnLongClickListener(true)
             }
 
-
         }
+
+        @SuppressLint("NewApi")
+        private fun getLastMessageTimeString(lastTimeString: String): String {
+            try {
+                var currentTime = LocalDateTime.now().atZone(TimeZone.getDefault().toZoneId()) //현재 시각
+                var dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss")
+
+                var messageMonth = lastTimeString.substring(4, 6).toInt()                   //마지막 메시지 시각 월,일,시,분
+                var messageDate = lastTimeString.substring(6, 8).toInt()
+                var messageHour = lastTimeString.substring(8, 10).toInt()
+                var messageMinute = lastTimeString.substring(10, 12).toInt()
+
+                var formattedCurrentTimeString = currentTime.format(dateTimeFormatter)     //현 시각 월,일,시,분
+                var currentMonth = formattedCurrentTimeString.substring(4, 6).toInt()
+                var currentDate = formattedCurrentTimeString.substring(6, 8).toInt()
+                var currentHour = formattedCurrentTimeString.substring(8, 10).toInt()
+                var currentMinute = formattedCurrentTimeString.substring(10, 12).toInt()
+
+                var monthAgo = currentMonth - messageMonth                           //현 시각과 마지막 메시지 시각과의 차이. 월,일,시,분
+                var dayAgo = currentDate - messageDate
+                var hourAgo = currentHour - messageHour
+                var minuteAgo = currentMinute - messageMinute
+
+                if (monthAgo > 0)                                         //1개월 이상 차이 나는 경우
+                    return monthAgo.toString() + "개월 전"
+                else {
+                    if (dayAgo > 0) {                                  //1일 이상 차이 나는 경우
+                        if (dayAgo == 1)
+                            return "어제"
+                        else
+                            return dayAgo.toString() + "일 전"
+                    } else {
+                        if (hourAgo > 0)
+                            return hourAgo.toString() + "시간 전"     //1시간 이상 차이 나는 경우
+                        else {
+                            if (minuteAgo > 0)                       //1분 이상 차이 나는 경우
+                                return minuteAgo.toString() + "분 전"
+                            else
+                                return "방금"
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                return ""
+            }
+        }
+
 
         // 뿌려줄 데이터의 전체 길이를 리턴  (아이템갯수)
         override fun getItemCount(): Int {
