@@ -80,34 +80,36 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
+        android:layout_marginEnd="14dp"
         android:layout_marginBottom="78dp"
-        android:text="대화하기"
         android:layout_weight="1"
+        android:text="대화하기"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/blkFriendBtn"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/blkFriendBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="9dp"
-        android:layout_marginEnd="150dp"
         android:layout_marginBottom="78dp"
         android:layout_weight="1"
         android:text="차단하기
 "
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/deleteFriendBtn"
         app:layout_constraintStart_toEndOf="@+id/chatBtn" />
 
     <Button
         android:id="@+id/deleteFriendBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="50dp"
+        android:layout_marginStart="14dp"
+        android:layout_marginEnd="30dp"
         android:layout_marginBottom="78dp"
-        android:text="친구삭제"
         android:layout_weight="1"
+        android:text="친구삭제"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/blkFriendBtn" />
 </androidx.constraintlayout.widget.ConstraintLayout>
