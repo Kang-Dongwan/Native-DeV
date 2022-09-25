@@ -44,23 +44,35 @@ class ChatActivity: AppCompatActivity() {
         friendUid = intent.getStringExtra("friendUid")
         chatId = intent.getStringExtra("chatId")
         uid = Firebase.auth.currentUser?.uid.toString()
-        Log.d("test", "채팅 진입")
+        Log.d("test", "채팅 진입 :: chatId = $chatId, uid = $uid, friendUid = $friendUid")
 
         if(chatId == null) {
-            fireDatabase.child("chatList").child("$uid").get().addOnSuccessListener {
+            fireDatabase.child("user").child("$friendUid").get().addOnSuccessListener {
+                binding.chatActivityTextViewTopName.text = it.child("name").getValue().toString()
+            }
+            fireDatabase.child("chatList").child("$uid").get().addOnSuccessListener { myList ->
                 var tempKey: String? = ""
-                it.children.forEach() {
+                myList.children.forEach() {
                     tempKey = it.key.toString()
-                }
-                Log.d("test", "tempKey : $tempKey")
-                if("" != tempKey) {
-                    fireDatabase.child("chatList").child("$friendUid").child("$tempKey").get()
-                        .addOnSuccessListener {
-                            chatId = it.key.toString()
-                            messageList()
-                        }
+                    Log.d("test", "tempKey : $tempKey")
+                    if("" != tempKey) {
+                        Log.d("test", "friendUid : $friendUid, tempKey : $tempKey")
+                        fireDatabase.child("chatList").child("$friendUid").child("$tempKey").get()
+                            .addOnSuccessListener { friList ->
+                                if(friList.value != null) {
+                                    chatId = friList.key.toString()
+                                    Log.d("test", "friendUid : $friendUid, chatId : $chatId")
+                                    messageList()
+                                }
+                            }
+                    }
                 }
             }
+        } else {
+            fireDatabase.child("chatList").child("$uid").child("$chatId").get().addOnSuccessListener {
+                binding.chatActivityTextViewTopName.text = it.child("chatName").getValue().toString()
+            }
+            messageList()
         }
 
         binding.chatActivityButton.setOnClickListener {
@@ -74,42 +86,46 @@ class ChatActivity: AppCompatActivity() {
 
             if(chatId == null) {
                 Log.d("test", "채팅룸 없음")
-                val chatList = ChatList()
+                var chatList = ChatList()
+                var name: String? = ""
+                var imgUrl: String? = ""
                 fireDatabase.child("user").child("$friendUid").get().addOnSuccessListener {
-                    var name: String? = ""
-                    var imgUrl: String? = ""
                     name = it.child("name").getValue().toString()
                     imgUrl = it.child("profileImageUrl").getValue().toString()
 
-                    chatList.chatName = name
-                    chatList.chatImageUrl = imgUrl
+                    chatList.chatName = name.toString()
+                    chatList.chatImageUrl = imgUrl.toString()
 
                     //fireDatabase.child("chatList").child("$uid").push().setValue(chatList)
                     chatId = fireDatabase.child("chatList").child("$uid").push().getKey()
                     fireDatabase.child("chatList").child("$uid").child("$chatId").setValue(chatList)
-                    fireDatabase.child("chatList").child("$friendUid").child("$chatId").setValue(chatList)
+
+                    fireDatabase.child("user").child("$uid").get().addOnSuccessListener {
+                        name = it.child("name").getValue().toString()
+                        imgUrl = it.child("profileImageUrl").getValue().toString()
+
+                        chatList.chatName = name.toString()
+                        chatList.chatImageUrl = imgUrl.toString()
+
+                        fireDatabase.child("chatList").child("$friendUid").child("$chatId").setValue(chatList)
+                    }
 
                     messageList()
 
                     Handler(Looper.getMainLooper()).postDelayed({
                         fireDatabase.child("chat").child("$chatId").push().setValue(message)
-                        fireDatabase.child("chatList").child("$uid").child("$chatId").child("lastMessage").setValue(message.message.toString())
-                        fireDatabase.child("chatList").child("$friendUid").child("$chatId").child("lastMessage").setValue(message.message.toString())
                     }, 1000L)
                 }
             } else {
                 Log.d("test", "채팅룸 존재")
                 fireDatabase.child("chat").child("$chatId").push().setValue(message)
-                fireDatabase.child("chatList").child("$uid").child("$chatId").child("lastMessage").setValue(message.message.toString())
-                fireDatabase.child("chatList").child("$friendUid").child("$chatId").child("lastMessage").setValue(message.message.toString())
             }
             binding.chatActivityEditText.text = null
         }
-        messageList()
     }
 
     private fun messageList(){
-        Log.d("test", "채팅 진입")
+        Log.d("test", "채팅 메시지 진입 : $chatId")
         fireDatabase.child("chat").child("$chatId").orderByChild("time")
             .addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(error: DatabaseError) {
