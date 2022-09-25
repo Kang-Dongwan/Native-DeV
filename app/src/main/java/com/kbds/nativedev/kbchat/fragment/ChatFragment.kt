@@ -270,6 +270,7 @@ class ChatFragment : Fragment() {
 
                 Glide.with(holder.imageView.context).load(chatImageUrl.toString())
                     .error(R.drawable.user)     // 이미지 로드 실패시 기본이미지 셋팅
+                    .circleCrop()
                     .into(holder.imageView)
             }
 
