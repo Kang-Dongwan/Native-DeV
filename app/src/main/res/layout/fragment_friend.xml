@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:orientation = "vertical"
     android:tag="friendTag"
+    android:weightSum="2"
     tools:context=".fragment.FriendFragment">
 
     <!-- TODO: Update blank fragment layout -->
@@ -28,16 +29,23 @@
         app:layout_constraintTop_toBottomOf="@+id/linearLayout">
     <Button
         android:id="@+id/addFriendBtn"
-        android:layout_width="202dp"
+        android:layout_width="wrap_content"
+        android:layout_weight="1"
         android:layout_height="50dp"
-        android:text="친구추가"></Button>
+        android:text="친구추가"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        ></Button>
 
-    <Button
-        android:id="@+id/blkFriendBtn"
-        android:layout_width="202dp"
-        android:layout_height="50dp"
-        android:layout_gravity="end"
-        android:text="차단목록"></Button>
+        <Button
+            android:id="@+id/blkFriendBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_gravity="end"
+            android:layout_weight="1"
+            android:text="차단목록"
+            android:layout_marginRight="20dp"
+            ></Button>
     </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
