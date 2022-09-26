@@ -75,7 +75,7 @@ class ProfileDetailActivity : AppCompatActivity() {
                 .setMessage("현재 친구를 삭제하시겠습니까?")
                 .setPositiveButton("확인",
                     DialogInterface.OnClickListener{ dialog, id ->
-                        FirebaseDatabase.getInstance().reference.child("user").addValueEventListener(object :
+                        FirebaseDatabase.getInstance().reference.child("user").addListenerForSingleValueEvent(object :
                             ValueEventListener {
                             override fun onDataChange(dataSnapshot: DataSnapshot) {
                                 for (snapshot in dataSnapshot.children) {
