@@ -226,7 +226,7 @@ class SettingFragment : Fragment() {
 
                     taskMap["user/$uid/name"] = name
                     taskMap["user/$uid/comment"] = comment
-                    taskMap["user/$uid/profileImageUrl"] = it.result
+                    taskMap["user/$uid/profileImageUrl"] = it.result.toString()
 
                     database.updateChildren(taskMap);
                 } else {
