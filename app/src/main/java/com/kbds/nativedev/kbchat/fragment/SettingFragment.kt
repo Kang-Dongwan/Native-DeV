@@ -180,11 +180,13 @@ class SettingFragment : Fragment() {
     }
     private fun registerUser(email:String, name:String, comment: String) {
         val database = Firebase.database.reference
+        val userId = user?.uid
+        val userIdSt = userId.toString()
 
         val taskMap = HashMap<String, Any>()
 
-        taskMap["user/$uid/name"] = name
-        taskMap["user/$uid/comment"] = comment
+        taskMap["user/$userIdSt/name"] = name
+        taskMap["user/$userIdSt/comment"] = comment
 
         database.updateChildren(taskMap);
 
@@ -206,7 +208,7 @@ class SettingFragment : Fragment() {
         }
         val data = baos.toByteArray()
 
-        val bitmapRef = fireStorage.child("userImages/${uid}/photo")
+        val bitmapRef = fireStorage.child("userImages/$userIdSt/photo")
         val uploadTask: UploadTask = bitmapRef.putBytes(data)
         uploadTask.addOnFailureListener {
             Log.d("uploadTask", "Faliure")
@@ -224,9 +226,9 @@ class SettingFragment : Fragment() {
 
                     val taskMap = HashMap<String, Any>()
 
-                    taskMap["user/$uid/name"] = name
-                    taskMap["user/$uid/comment"] = comment
-                    taskMap["user/$uid/profileImageUrl"] = it.result.toString()
+                    taskMap["user/$userIdSt/name"] = name
+                    taskMap["user/$userIdSt/comment"] = comment
+                    taskMap["user/$userIdSt/profileImageUrl"] = it.result.toString()
 
                     database.updateChildren(taskMap);
                 } else {
