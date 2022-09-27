@@ -253,6 +253,10 @@ class ChatFragment : Fragment() {
 
             println("onBindViewHolder!!!!!")
 
+            val layoutParam = holder.itemView.layoutParams
+            layoutParam.height = 300
+            holder.itemView.requestLayout()
+
             var chatId = chatList[position].getChatId().toString()
             var chatName = chatList[position].getChatName().toString()
             var lastMessage = chatList[position].getLastMessage().toString()
