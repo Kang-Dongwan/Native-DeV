@@ -110,9 +110,6 @@ class RegisterActivity : AppCompatActivity() {
         auth = Firebase.auth
         database = Firebase.database.reference
 
-        var profileCheck = false
-
-
 //        val email = findViewById<EditText>(R.id.email)
 //        val pwd = findViewById<EditText>(R.id.et_pwd)
 //        val pwdAgain = findViewById<EditText>(R.id.et_re_pwd)
@@ -128,7 +125,6 @@ class RegisterActivity : AppCompatActivity() {
                 ) == PackageManager.PERMISSION_GRANTED
                 -> {
                     navigateGallery()
-                    profileCheck = true
                 }
 
                 // 갤러리 접근 권한이 없는 경우 & 교육용 팝업을 보여줘야 하는 경우
@@ -158,9 +154,8 @@ class RegisterActivity : AppCompatActivity() {
             } else if(binding.etTextviewName.text.isEmpty()){
                 Toast.makeText(this, "이름을 입력해 주세요.", Toast.LENGTH_SHORT).show()
             } else {
-                Log.d("profileCheck", "$profileCheck")
                 Log.d("email", "$binding.email.text")
-                if(!profileCheck) {
+                if(imageUri==null) {
                     registerUser(
                         binding.email.text.toString(),
                         binding.etPwd.text.toString(),
