@@ -6,33 +6,28 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import android.widget.ImageView
-import android.widget.TextView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat
-import com.kbds.nativedev.kbchat.R
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.*
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.ktx.database
-import com.google.firebase.database.ktx.getValue
-import com.kbds.nativedev.kbchat.MainActivity
-import com.kbds.nativedev.kbchat.model.ChatRoom
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.ktx.Firebase
 import com.kbds.nativedev.kbchat.ChatActivity
+import com.kbds.nativedev.kbchat.R
 import java.time.LocalDateTime
-import java.util.*
-import kotlin.collections.ArrayList
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 // 파이어베이스 접근하기 위한 객체 생성
 //private lateinit var database: DatabaseReference
@@ -180,18 +175,18 @@ class ChatFragment : Fragment() {
 
                             data1 = snapshot.value as MutableMap<String, String>
 
-                            Log.d("test", "delYn => " + data1.get("delYn"))
+                            Log.d("test", "delYn => " + data1["delYn"])
 
-                            if("N".equals(data1.get("delYn"))){     // 나가지 않은 채팅방들만 리스트에 뿌려줌
+                            if("N" == data1["delYn"]){     // 나가지 않은 채팅방들만 리스트에 뿌려줌
                                 Log.d("test", "chatId => " + snapshot.key.toString())
                                 Log.d("test", "chatName => " + data1.get("chatName"))
                                 Log.d("test", "lastMessage => " + data1.get("lastMessage"))
 
                                 var chatId = snapshot.key
-                                var chatName = data1.get("chatName").toString()
+                                var chatName = data1["chatName"].toString()
                                 var lastMessage = ""
                                 var chatImageUrl = ""
-                                var visitYn = data1.get("visitYn").toString()
+                                var visitYn = data1["visitYn"].toString()
 
 
                                 if(data1.get("lastMessage") != null){
@@ -357,44 +352,79 @@ class ChatFragment : Fragment() {
         @SuppressLint("NewApi")
         private fun getLastMessageTimeString(lastTimeString: String): String {
             try {
-                var currentTime = LocalDateTime.now().atZone(TimeZone.getDefault().toZoneId()) //현재 시각
-                var dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss")
+                //FIXME LocalDateTime은 SDK26에서 추가되었으며, 현재 프로젝트의 minSDK가 23이기때문에 변경하였음.
+                //FIXME 참고 : https://developer.android.com/reference/java/time/LocalDateTime
+//                var currentTime = LocalDateTime.now().atZone(TimeZone.getDefault().toZoneId()) //현재 시각
+//                var dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss")
+//
+//                var messageMonth = lastTimeString.substring(4, 6).toInt()                   //마지막 메시지 시각 월,일,시,분
+//                var messageDate = lastTimeString.substring(6, 8).toInt()
+//                var messageHour = lastTimeString.substring(8, 10).toInt()
+//                var messageMinute = lastTimeString.substring(10, 12).toInt()
+//
+//                var formattedCurrentTimeString = currentTime.format(dateTimeFormatter)     //현 시각 월,일,시,분
+//                var currentMonth = formattedCurrentTimeString.substring(4, 6).toInt()
+//                var currentDate = formattedCurrentTimeString.substring(6, 8).toInt()
+//                var currentHour = formattedCurrentTimeString.substring(8, 10).toInt()
+//                var currentMinute = formattedCurrentTimeString.substring(10, 12).toInt()
+//
+//                var monthAgo = currentMonth - messageMonth                           //현 시각과 마지막 메시지 시각과의 차이. 월,일,시,분
+//                var dayAgo = currentDate - messageDate
+//                var hourAgo = currentHour - messageHour
+//                var minuteAgo = currentMinute - messageMinute
+//
+//                if (monthAgo > 0)                                         //1개월 이상 차이 나는 경우
+//                    return monthAgo.toString() + "개월 전"
+//                else {
+//                    if (dayAgo > 0) {                                  //1일 이상 차이 나는 경우
+//                        if (dayAgo == 1)
+//                            return "어제"
+//                        else
+//                            return dayAgo.toString() + "일 전"
+//                    } else {
+//                        if (hourAgo > 0)
+//                            return hourAgo.toString() + "시간 전"     //1시간 이상 차이 나는 경우
+//                        else {
+//                            if (minuteAgo > 0)                       //1분 이상 차이 나는 경우
+//                                return minuteAgo.toString() + "분 전"
+//                            else
+//                                return "방금"
+//                        }
+//                    }
+//                }
 
-                var messageMonth = lastTimeString.substring(4, 6).toInt()                   //마지막 메시지 시각 월,일,시,분
+
+                //마지막 메시지 시각 월,일,시,분
+                var messageYear = lastTimeString.substring(0, 4).toInt()
+                var messageMonth = lastTimeString.substring(4, 6).toInt()
                 var messageDate = lastTimeString.substring(6, 8).toInt()
                 var messageHour = lastTimeString.substring(8, 10).toInt()
                 var messageMinute = lastTimeString.substring(10, 12).toInt()
+                val lastMessageTime = Calendar.getInstance()
+                lastMessageTime.set(messageYear, messageMonth, messageDate, messageHour, messageMinute, 0)
 
-                var formattedCurrentTimeString = currentTime.format(dateTimeFormatter)     //현 시각 월,일,시,분
-                var currentMonth = formattedCurrentTimeString.substring(4, 6).toInt()
-                var currentDate = formattedCurrentTimeString.substring(6, 8).toInt()
-                var currentHour = formattedCurrentTimeString.substring(8, 10).toInt()
-                var currentMinute = formattedCurrentTimeString.substring(10, 12).toInt()
+                val now = Calendar.getInstance()    //현재시각
 
-                var monthAgo = currentMonth - messageMonth                           //현 시각과 마지막 메시지 시각과의 차이. 월,일,시,분
-                var dayAgo = currentDate - messageDate
-                var hourAgo = currentHour - messageHour
-                var minuteAgo = currentMinute - messageMinute
+                val diffYear: Int = now.get(Calendar.YEAR) - lastMessageTime.get(Calendar.YEAR)
+                val diffMonth: Int = now.get(Calendar.MONTH) - lastMessageTime.get(Calendar.MONTH)
+                val diffDay: Int = now.get(Calendar.DATE) - lastMessageTime.get(Calendar.DATE)
+                val diffHour: Int = now.get(Calendar.HOUR_OF_DAY) - lastMessageTime.get(Calendar.HOUR_OF_DAY)
+                val diffMinute: Int = now.get(Calendar.MINUTE) - lastMessageTime.get(Calendar.MINUTE)
 
-                if (monthAgo > 0)                                         //1개월 이상 차이 나는 경우
-                    return monthAgo.toString() + "개월 전"
-                else {
-                    if (dayAgo > 0) {                                  //1일 이상 차이 나는 경우
-                        if (dayAgo == 1)
-                            return "어제"
-                        else
-                            return dayAgo.toString() + "일 전"
-                    } else {
-                        if (hourAgo > 0)
-                            return hourAgo.toString() + "시간 전"     //1시간 이상 차이 나는 경우
-                        else {
-                            if (minuteAgo > 0)                       //1분 이상 차이 나는 경우
-                                return minuteAgo.toString() + "분 전"
-                            else
-                                return "방금"
-                        }
-                    }
+                return if(diffYear > 0){
+                    "아주 오래전"
+                } else if(diffMonth > 0){   //1개월 이상 차이 나는 경우
+                    diffMonth.toString() + "개월 전"
+                } else if(diffDay > 0){     //1일 이상 차이 나는 경우
+                    diffDay.toString() + "일 전"
+                } else if(diffHour > 0){    //1시간 이상 차이 나는 경우
+                    diffHour.toString() + "시간 전"
+                } else if(diffMinute > 0) { //1분 이상 차이 나는 경우
+                    diffMinute.toString() + "분 전"
+                } else {
+                    "방금"
                 }
+
             } catch (e: Exception) {
                 e.printStackTrace()
                 return ""
