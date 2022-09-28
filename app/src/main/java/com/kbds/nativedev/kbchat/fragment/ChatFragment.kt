@@ -44,6 +44,7 @@ data class ChatListModel(
     , private var delYn: String? = null         // 채팅방 나감 여부 (Y/N)
     , private var msgCnt: Long? = 0             // 안읽은 메시지 수
     , private var visitYn: String? = null       // 사용자가 해당 채팅방 방문여부 (Y/N)
+    , private var lastMsgTime: String? = null
 ){
     fun getUid(): String? {
         return uid
@@ -65,6 +66,10 @@ data class ChatListModel(
     }
     fun getLastMessage(): String? {
         return lastMessage
+    }
+
+    fun getLastMsgTime(): String? {
+        return lastMsgTime
     }
 
     fun getChatImageUrl(): String? {
@@ -142,7 +147,6 @@ class ChatFragment : Fragment() {
         private var message: ArrayList<Message> = arrayListOf()
         //private var uid : String? = null        // ?는 uid가 null일수도 있음을 표시
 
-        private val destinationUsers : ArrayList<String> = arrayListOf()
 
         init {
             // 사용자의 uid
@@ -187,6 +191,7 @@ class ChatFragment : Fragment() {
                                 var lastMessage = ""
                                 var chatImageUrl = ""
                                 var visitYn = data1["visitYn"].toString()
+                                var lastMsgTime = "00000000"
 
 
                                 if(data1.get("lastMessage") != null){
@@ -196,6 +201,13 @@ class ChatFragment : Fragment() {
                                 if(data1.get("chatImageUrl") != null){
                                     chatImageUrl = data1.get("chatImageUrl").toString()
                                 }
+
+                                if(data1.get("lastMsgTime") != null){
+                                    lastMsgTime = data1.get("lastMsgTime").toString()
+                                }
+
+                                Log.d("test", "lastMsgTime => " + lastMsgTime)
+
 
                                 var delYn = data1.get("delYn")
 
@@ -210,16 +222,15 @@ class ChatFragment : Fragment() {
                                         chatImageUrl,
                                         delYn,
                                         msgCnt,
-                                        visitYn
+                                        visitYn,
+                                        lastMsgTime
                                     )
                                 )
                                 chatList.addAll(myMutableList1)
                             }
 
-
-
-
                         }
+                        chatList.sortByDescending { it.getLastMsgTime() }   // 채팅방 최신순 정렬
                         notifyDataSetChanged()
                     }
                 })
@@ -280,10 +291,13 @@ class ChatFragment : Fragment() {
 
                     if(snapshot.exists()){
                         holder.textView_lastMessage.text = snapshot.children.last().child("message").getValue().toString()
+
                         //holder.textView_chatDayTime.text = snapshot.children.last().child("time").getValue().toString()
                         //database.child("chatList").child(uid).child()
 
                         holder.textView_chatDayTime.text = getLastMessageTimeString(snapshot.children.last().child("time").getValue().toString())
+                        var lastMsgTime = snapshot.children.last().child("time").getValue().toString()
+                        database.child("chatList").child("$uid").child(chatId).child("lastMsgTime").setValue(lastMsgTime)
 
                     }
                 }

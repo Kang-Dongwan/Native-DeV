@@ -3,62 +3,33 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/Dong wan/AndroidStudioProjects/KBChat/app/src/main/res/drawable-v24/ic_baseline_account_box_24.xml" value="0.3065" />
-        <entry key="..\:/Users/Dong wan/AndroidStudioProjects/KBChat/app/src/main/res/drawable-v24/ic_baseline_chat_24.xml" value="0.3065" />
-        <entry key="..\:/Users/Dong wan/AndroidStudioProjects/KBChat/app/src/main/res/drawable-v24/ic_baseline_home_24.xml" value="0.3065" />
-        <entry key="..\:/Users/Dong wan/AndroidStudioProjects/KBChat/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.3065" />
-        <entry key="..\:/Users/Dong wan/AndroidStudioProjects/KBChat/app/src/main/res/drawable/bottom_icon_color.xml" value="0.3065" />
-        <entry key="..\:/Users/Dong wan/AndroidStudioProjects/KBChat/app/src/main/res/drawable/ic_baseline_setting_24.xml" value="0.33" />
-        <entry key="..\:/Users/Dong wan/AndroidStudioProjects/KBChat/app/src/main/res/drawable/ic_launcher_background.xml" value="0.3065" />
-        <entry key="..\:/Users/Dong wan/AndroidStudioProjects/KBChat/app/src/main/res/drawable/ic_launcher_foreground.xml" value="0.3065" />
-        <entry key="..\:/Users/Dong wan/AndroidStudioProjects/KBChat/app/src/main/res/layout/activity_add_friends.xml" value="0.29739583333333336" />
-        <entry key="..\:/Users/Dong wan/AndroidStudioProjects/KBChat/app/src/main/res/layout/activity_chat.xml" value="0.29635416666666664" />
         <entry key="..\:/Users/Dong wan/AndroidStudioProjects/KBChat/app/src/main/res/layout/activity_login.xml" value="0.39114583333333336" />
         <entry key="..\:/Users/Dong wan/AndroidStudioProjects/KBChat/app/src/main/res/layout/activity_main.xml" value="0.2767210144927536" />
-        <entry key="..\:/Users/Dong wan/AndroidStudioProjects/KBChat/app/src/main/res/layout/activity_profile_detail.xml" value="0.39791666666666664" />
-        <entry key="..\:/Users/Dong wan/AndroidStudioProjects/KBChat/app/src/main/res/layout/activity_register.xml" value="0.39791666666666664" />
         <entry key="..\:/Users/Dong wan/AndroidStudioProjects/KBChat/app/src/main/res/layout/bottom_menu.xml" value="0.3765625" />
-        <entry key="..\:/Users/Dong wan/AndroidStudioProjects/KBChat/app/src/main/res/layout/content_add_friends.xml" value="0.39791666666666664" />
         <entry key="..\:/Users/Dong wan/AndroidStudioProjects/KBChat/app/src/main/res/layout/fragment_chat.xml" value="0.3104166666666667" />
-        <entry key="..\:/Users/Dong wan/AndroidStudioProjects/KBChat/app/src/main/res/layout/fragment_first.xml" value="0.3104166666666667" />
         <entry key="..\:/Users/Dong wan/AndroidStudioProjects/KBChat/app/src/main/res/layout/fragment_friend.xml" value="0.3104166666666667" />
         <entry key="..\:/Users/Dong wan/AndroidStudioProjects/KBChat/app/src/main/res/layout/fragment_friend_fragmet.xml" value="0.3104166666666667" />
-        <entry key="..\:/Users/Dong wan/AndroidStudioProjects/KBChat/app/src/main/res/layout/fragment_second.xml" value="0.35625" />
         <entry key="..\:/Users/Dong wan/AndroidStudioProjects/KBChat/app/src/main/res/layout/fragment_setting.xml" value="0.3104166666666667" />
-        <entry key="..\:/Users/Dong wan/AndroidStudioProjects/KBChat/app/src/main/res/layout/fragment_setting_navi.xml" value="0.35625" />
-        <entry key="..\:/Users/Dong wan/AndroidStudioProjects/KBChat/app/src/main/res/layout/item_chat.xml" value="0.29739583333333336" />
-        <entry key="..\:/Users/Dong wan/AndroidStudioProjects/KBChat/app/src/main/res/layout/item_data_list.xml" value="0.29739583333333336" />
-        <entry key="..\:/Users/Dong wan/AndroidStudioProjects/KBChat/app/src/main/res/layout/item_message.xml" value="0.39791666666666664" />
-        <entry key="..\:/Users/Dong wan/AndroidStudioProjects/KBChat/app/src/main/res/layout/item_message_left.xml" value="0.35625" />
-        <entry key="..\:/Users/Dong wan/AndroidStudioProjects/KBChat/app/src/main/res/layout/item_message_right.xml" value="0.35625" />
-        <entry key="..\:/Users/Dong wan/AndroidStudioProjects/KBChat/app/src/main/res/layout/item_notice.xml" value="0.35625" />
-        <entry key="..\:/Users/Dong wan/AndroidStudioProjects/KBChat/app/src/main/res/menu/bottom_menu.xml" value="0.35625" />
-        <entry key="..\:/Users/Dong wan/AndroidStudioProjects/KBChat/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.3065" />
-        <entry key="..\:/Users/Dong wan/AndroidStudioProjects/KBChat/app/src/main/res/mipmap-anydpi-v26/ic_setting.xml" value="0.3065" />
-        <entry key="..\:/Users/syw/AndroidStudioProjects/KBChat/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.275" />
-        <entry key="..\:/Users/syw/AndroidStudioProjects/KBChat/app/src/main/res/drawable/ic_launcher_background.xml" value="0.275" />
-        <entry key="..\:/Users/syw/AndroidStudioProjects/KBChat/app/src/main/res/layout/activity_login.xml" value="0.36271529888551163" />
-        <entry key="..\:/Users/syw/AndroidStudioProjects/KBChat/app/src/main/res/layout/activity_main.xml" value="0.36271529888551163" />
-        <entry key="..\:/Users/syw/AndroidStudioProjects/KBChat/app/src/main/res/layout/activity_register.xml" value="0.33" />
-        <entry key="..\:/Users/syw/AndroidStudioProjects/KBChat/app/src/main/res/layout/fragment_chat.xml" value="0.36271529888551163" />
-        <entry key="..\:/Users/syw/AndroidStudioProjects/KBChat/app/src/main/res/layout/fragment_friend.xml" value="0.36271529888551163" />
-        <entry key="..\:/Users/syw/AndroidStudioProjects/KBChat/app/src/main/res/layout/fragment_setting.xml" value="0.36271529888551163" />
-        <entry key="..\:/Users/syw/AndroidStudioProjects/KBChat/app/src/main/res/layout/fragment_setting_navi.xml" value="0.2315096251266464" />
-        <entry key="..\:/Users/syw/AndroidStudioProjects/KBChat/app/src/main/res/menu/bottom_menu.xml" value="0.5" />
-        <entry key="..\:/Users/syw/AndroidStudioProjects/KBChat/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.283" />
-        <entry key="..\:/Users/syw/AndroidStudioProjects/KBChat/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.283" />
+        <entry key="app/src/main/res/drawable-v24/ic_baseline_account_box_24.xml" value="0.243" />
+        <entry key="app/src/main/res/drawable-v24/ic_baseline_chat_24.xml" value="0.103" />
+        <entry key="app/src/main/res/drawable-v24/ic_baseline_home_24.xml" value="0.192" />
+        <entry key="app/src/main/res/layout/activity_add_friends.xml" value="0.165" />
+        <entry key="app/src/main/res/layout/activity_chat.xml" value="0.18385416666666668" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.11145833333333334" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.12208713272543059" />
-        <entry key="app/src/main/res/layout/activity_profile_detail.xml" value="0.19791666666666666" />
+        <entry key="app/src/main/res/layout/activity_profile_detail.xml" value="0.165" />
         <entry key="app/src/main/res/layout/content_add_friends.xml" value="0.11145833333333334" />
-        <entry key="app/src/main/res/layout/fragment_chat.xml" value="0.1339918946301925" />
+        <entry key="app/src/main/res/layout/fragment_chat.xml" value="0.165" />
         <entry key="app/src/main/res/layout/fragment_first.xml" value="0.11145833333333334" />
-        <entry key="app/src/main/res/layout/fragment_friend.xml" value="0.16983695652173914" />
+        <entry key="app/src/main/res/layout/fragment_friend.xml" value="0.165" />
         <entry key="app/src/main/res/layout/fragment_second.xml" value="0.11145833333333334" />
-        <entry key="app/src/main/res/layout/fragment_setting.xml" value="0.26132246376811596" />
-        <entry key="app/src/main/res/layout/fragment_setting_navi.xml" value="0.26132246376811596" />
-        <entry key="app/src/main/res/layout/item_chat.xml" value="0.13272543059777103" />
+        <entry key="app/src/main/res/layout/fragment_setting.xml" value="0.12208713272543059" />
+        <entry key="app/src/main/res/layout/fragment_setting_navi.xml" value="0.18385416666666668" />
+        <entry key="app/src/main/res/layout/item_chat.xml" value="0.20018115942028986" />
         <entry key="app/src/main/res/layout/item_data_list.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/item_message_left.xml" value="0.24635416666666668" />
+        <entry key="app/src/main/res/menu/bottom_menu.xml" value="0.11145833333333334" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.243" />
       </map>
     </option>
   </component>
