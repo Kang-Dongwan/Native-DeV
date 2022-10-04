@@ -156,7 +156,7 @@ class ProfileDetailActivity : AppCompatActivity() {
                     .setPositiveButton("확인",
                         DialogInterface.OnClickListener { dialog, id ->
                             FirebaseDatabase.getInstance().reference.child("user")
-                                .addValueEventListener(object :
+                                .addListenerForSingleValueEvent(object :
                                     ValueEventListener {
                                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                                         for (snapshot in dataSnapshot.children) {
@@ -232,7 +232,7 @@ class ProfileDetailActivity : AppCompatActivity() {
                     .setPositiveButton("확인",
                         DialogInterface.OnClickListener { dialog, id ->
                             FirebaseDatabase.getInstance().reference.child("user")
-                                .addValueEventListener(object :
+                                .addListenerForSingleValueEvent(object :
                                     ValueEventListener {
                                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                                         for (snapshot in dataSnapshot.children) {
