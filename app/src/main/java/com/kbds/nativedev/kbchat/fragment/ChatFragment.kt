@@ -25,6 +25,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.ktx.Firebase
 import com.kbds.nativedev.kbchat.ChatActivity
 import com.kbds.nativedev.kbchat.R
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -93,6 +94,7 @@ class ChatFragment : Fragment() {
     //private lateinit var data: MutableMap<String, String>
     private lateinit var data1: MutableMap<String, String>
     private lateinit var chat : MutableMap<String, String>
+    private val dateFormatter = SimpleDateFormat ("yyyyMMddHHmmssSS")
 
     val user = Firebase.auth.currentUser
     var uid : String? = null        // ?는 uid가 null일수도 있음을 표시
@@ -349,8 +351,9 @@ class ChatFragment : Fragment() {
                     .setPositiveButton("예",
                         DialogInterface.OnClickListener { dialog, id ->
                             var uid = user?.uid.toString()
-
+                            dateFormatter.timeZone = TimeZone.getTimeZone("Asia/Seoul")
                             database.child("chatList").child(uid).child(chatId).child("delYn").setValue("Y")
+                            database.child("chatList").child(uid).child(chatId).child("delTime").setValue(dateFormatter.format(Date().time))
                             Toast.makeText(this@ChatFragment.context, "퇴장 성공", Toast.LENGTH_LONG).show()
 
                         })

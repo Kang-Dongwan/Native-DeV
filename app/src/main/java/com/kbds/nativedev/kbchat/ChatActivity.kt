@@ -118,6 +118,7 @@ class ChatActivity: AppCompatActivity() {
                 }
             } else {
                 Log.d("test", "채팅룸 존재")
+                fireDatabase.child("chatList").child("$uid").child("$chatId").child("delYn").setValue("N")
                 fireDatabase.child("chat").child("$chatId").push().setValue(message)
             }
             binding.chatActivityEditText.text = null
@@ -126,29 +127,41 @@ class ChatActivity: AppCompatActivity() {
 
     private fun messageList(){
         Log.d("test", "채팅 메시지 진입 : $chatId")
-        fireDatabase.child("chat").child("$chatId").orderByChild("time")
-            .addValueEventListener(object : ValueEventListener {
-                override fun onCancelled(error: DatabaseError) {
-                }
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    Log.d("test", "DB 조회")
-                    messageList.clear()
-                    for (item in snapshot.children){
-                        var cuid = item.child("uid").getValue().toString()
-                        var message1 = item.child("message").getValue().toString()
-                        var time = item.child("time").getValue().toString()
-                        Log.d("test", "cuid = $cuid")
-                        Log.d("test", "message = $message1")
-                        Log.d("test", "time = $time")
-                        val data = item.getValue(Message::class.java)
-                        if (data != null) {
-                            messageList.add(data)
-                        }
-                        binding.messageActivityRecyclerview.layoutManager = LinearLayoutManager(this@ChatActivity)
-                        binding.messageActivityRecyclerview.adapter = MessageAdapter(messageList)
-                        binding.messageActivityRecyclerview.scrollToPosition(messageList.size - 1)
+        var delTime:String = ""
+        fireDatabase.child("chatList").child("$uid").child("$chatId").child("delTime").get().addOnSuccessListener {
+            Log.d("test", "it.value : ${it.value}")
+            if(it.value != null) {
+                delTime = it.value.toString()
+            }
+            Log.d("test", "delTime : $delTime")
+
+            fireDatabase.child("chat").child("$chatId").orderByChild("time")
+                .addValueEventListener(object : ValueEventListener {
+                    override fun onCancelled(error: DatabaseError) {
                     }
-                }
-            })
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        Log.d("test", "DB 조회")
+                        messageList.clear()
+                        for (item in snapshot.children){
+                            var cuid = item.child("uid").getValue().toString()
+                            var message1 = item.child("message").getValue().toString()
+                            var time = item.child("time").getValue().toString()
+                            Log.d("test", "cuid = $cuid")
+                            Log.d("test", "message = $message1")
+                            Log.d("test", "time = $time")
+                            if(delTime.compareTo(time) > 0) {
+                                continue
+                            }
+                            val data = item.getValue(Message::class.java)
+                            if (data != null) {
+                                messageList.add(data)
+                            }
+                            binding.messageActivityRecyclerview.layoutManager = LinearLayoutManager(this@ChatActivity)
+                            binding.messageActivityRecyclerview.adapter = MessageAdapter(messageList)
+                            binding.messageActivityRecyclerview.scrollToPosition(messageList.size - 1)
+                        }
+                    }
+                })
+        }
     }
 }
